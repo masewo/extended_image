@@ -55,6 +55,7 @@ class ExtendedImage extends StatefulWidget {
     this.initEditorConfigHandler,
     this.heroBuilderForSlidingPage,
     this.clearMemoryCacheWhenDispose: false,
+    this.pointerDownNotifier
   })  : assert(image != null),
         assert(constraints == null || constraints.debugAssertIsValid()),
         constraints = (width != null || height != null)
@@ -108,6 +109,7 @@ class ExtendedImage extends StatefulWidget {
     this.heroBuilderForSlidingPage,
     this.clearMemoryCacheWhenDispose: false,
     bool handleLoadingProgress: false,
+    this.pointerDownNotifier
   })  :
         //assert(autoCancel != null),
         image = ExtendedNetworkImageProvider(url,
@@ -181,6 +183,7 @@ class ExtendedImage extends StatefulWidget {
     this.initEditorConfigHandler,
     this.heroBuilderForSlidingPage,
     this.clearMemoryCacheWhenDispose: false,
+    this.pointerDownNotifier
   })  : image = ExtendedFileImageProvider(file, scale: scale),
         assert(alignment != null),
         assert(repeat != null),
@@ -356,6 +359,7 @@ class ExtendedImage extends StatefulWidget {
     this.initEditorConfigHandler,
     this.heroBuilderForSlidingPage,
     this.clearMemoryCacheWhenDispose: false,
+    this.pointerDownNotifier
   })  : image = scale != null
             ? ExtendedExactAssetImageProvider(name,
                 bundle: bundle, scale: scale, package: package)
@@ -422,6 +426,7 @@ class ExtendedImage extends StatefulWidget {
     this.initEditorConfigHandler,
     this.heroBuilderForSlidingPage,
     this.clearMemoryCacheWhenDispose: false,
+    this.pointerDownNotifier
   })  : image = ExtendedMemoryImageProvider(bytes, scale: scale),
         assert(alignment != null),
         assert(repeat != null),
@@ -647,6 +652,8 @@ class ExtendedImage extends StatefulWidget {
   /// Useful for images which do not contribute meaningful information to an
   /// application.
   final bool excludeFromSemantics;
+
+  final ValueNotifier<bool> pointerDownNotifier;
 
   @override
   _ExtendedImageState createState() => _ExtendedImageState();
@@ -972,6 +979,7 @@ class _ExtendedImageState extends State<ExtendedImage>
       current = ExtendedImageEditor(
         extendedImageState: this,
         key: widget.extendedImageEditorKey,
+        pointerDownNotifier: widget.pointerDownNotifier
       );
     } else {
       current = _buildExtendedRawImage();

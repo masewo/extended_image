@@ -16,7 +16,8 @@ import 'extended_image_editor_utils.dart';
 
 class ExtendedImageEditor extends StatefulWidget {
   final ExtendedImageState extendedImageState;
-  ExtendedImageEditor({this.extendedImageState, Key key})
+  final ValueNotifier<bool> pointerDownNotifier;
+  ExtendedImageEditor({this.extendedImageState, this.pointerDownNotifier, Key key})
       : assert(extendedImageState.imageWidget.fit == BoxFit.contain,
             "Make sure the image is all painted to crop,the fit of image must be BoxFit.contain"),
         assert(extendedImageState.imageWidget.image is ExtendedImageProvider,
@@ -178,9 +179,11 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor> {
       child: result,
       onPointerDown: (_) {
         _layerKey.currentState.pointerDown(true);
+        widget.pointerDownNotifier.value = true;
       },
       onPointerUp: (_) {
         _layerKey.currentState.pointerDown(false);
+        widget.pointerDownNotifier.value = false;
       },
       // onPointerCancel: (_) {
       //   pointerDown(false);
