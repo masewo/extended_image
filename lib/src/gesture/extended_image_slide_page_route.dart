@@ -252,24 +252,37 @@ class TransparentCupertinoPageRoute<T> extends PageRoute<T> {
   static bool _isPopGestureEnabled<T>(PageRoute<T> route) {
     // If there's nothing to go back to, then obviously we don't support
     // the back gesture.
-    if (route.isFirst) return false;
+    if (route.isFirst) {
+      return false;
+    }
     // If the route wouldn't actually pop if we popped it, then the gesture
     // would be really confusing (or would skip internal routes), so disallow it.
-    if (route.willHandlePopInternally) return false;
+    if (route.willHandlePopInternally) {
+      return false;
+    }
     // If attempts to dismiss this route might be vetoed such as in a page
     // with forms, then do not allow the user to dismiss the route with a swipe.
-    if (route.hasScopedWillPopCallback) return false;
+    if (route.hasScopedWillPopCallback) {
+      return false;
+    }
     // Fullscreen dialogs aren't dismissible by back swipe.
-    if (route.fullscreenDialog) return false;
+    if (route.fullscreenDialog) {
+      return false;
+    }
     // If we're in an animation already, we cannot be manually swiped.
-    if (route.animation.status != AnimationStatus.completed) return false;
+    if (route.animation.status != AnimationStatus.completed) {
+      return false;
+    }
     // If we're being popped into, we also cannot be swiped until the pop above
     // it completes. This translates to our secondary animation being
     // dismissed.
-    if (route.secondaryAnimation.status != AnimationStatus.dismissed)
+    if (route.secondaryAnimation.status != AnimationStatus.dismissed) {
       return false;
+    }
     // If we're in a gesture already, we cannot start another.
-    if (isPopGestureInProgress(route)) return false;
+    if (isPopGestureInProgress(route)) {
+      return false;
+    }
 
     // Looks like a back gesture would be welcome!
     return true;
@@ -328,6 +341,7 @@ class TransparentCupertinoPageRoute<T> extends PageRoute<T> {
     Animation<double> secondaryAnimation,
     Widget child,
   ) {
+    final bool linearTransition = isPopGestureInProgress(route);
     if (route.fullscreenDialog) {
       final bool linearTransition = isPopGestureInProgress(route);
       return CupertinoFullscreenDialogTransition(
@@ -340,12 +354,7 @@ class TransparentCupertinoPageRoute<T> extends PageRoute<T> {
       return CupertinoPageTransition(
         primaryRouteAnimation: animation,
         secondaryRouteAnimation: secondaryAnimation,
-        // Check if the route has an animation that's currently participating
-        // in a back swipe gesture.
-        //
-        // In the middle of a back gesture drag, let the transition be linear to
-        // match finger motions.
-        linearTransition: isPopGestureInProgress(route),
+        linearTransition: linearTransition,
         child: _CupertinoBackGestureDetector<T>(
           enabledCallback: () => _isPopGestureEnabled<T>(route),
           onStartPopGesture: () => _startPopGesture<T>(route),
@@ -451,7 +460,9 @@ class _CupertinoBackGestureDetectorState<T>
   }
 
   void _handlePointerDown(PointerDownEvent event) {
-    if (widget.enabledCallback()) _recognizer.addPointer(event);
+    if (widget.enabledCallback()) {
+      _recognizer.addPointer(event);
+    }
   }
 
   double _convertToLogical(double value) {
@@ -540,10 +551,19 @@ class _CupertinoBackGestureController<T> {
     // If the user releases the page before mid screen with sufficient velocity,
     // or after mid screen, we should animate the page out. Otherwise, the page
     // should be animated back in.
-    if (doubleCompare(velocity.abs(), _kMinFlingVelocity) >= 0)
-      animateForward = velocity > 0 ? false : true;
-    else
-      animateForward = controller.value > 0.5 ? true : false;
+    if (doubleCompare(velocity.abs(), _kMinFlingVelocity) >= 0) {
+      if (velocity > 0) {
+        animateForward = false;
+      } else {
+        animateForward = true;
+      }
+    } else {
+      if (controller.value > 0.5) {
+        animateForward = true;
+      } else {
+        animateForward = false;
+      }
+    }
 
     if (animateForward) {
       // The closer the panel is to dismissing, the shorter the animation is.
