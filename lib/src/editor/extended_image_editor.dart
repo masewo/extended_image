@@ -108,7 +108,6 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor> {
         onScaleUpdate: _handleScaleUpdate,
         behavior: HitTestBehavior.translucent,
         child: Stack(
-          overflow: Overflow.clip,
           children: <Widget>[
             Positioned(
               child: image,
