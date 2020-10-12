@@ -21,6 +21,7 @@ A powerful official extension library of image, which support placeholder(loadin
     - [double tap animation](#double-tap-animation)
   - [Editor](#editor)
     - [crop aspect ratio](#crop-aspect-ratio)
+    - [corner painter](#corner-painter)
     - [crop,flip,reset](#cropflipreset)
     - [crop data](#crop-data)
       - [dart library(stable)](#dart-librarystable)
@@ -355,8 +356,8 @@ EditorConfig
 | ---------------------- | ------------------------------------------------------------------ | ------------------------------------------------------------ |
 | maxScale               | max scale of zoom                                                  | 5.0                                                          |
 | cropRectPadding        | the padding between crop rect and image layout rect.               | EdgeInsets.all(20.0)                                         |
-| cornerSize             | size of corner shape                                               | Size(30.0, 5.0)                                              |
-| cornerColor            | color of corner shape                                              | primaryColor                                                 |
+| cornerSize             | size of corner shape  (DEPRECATED! Use cornerPainter)              | Size(30.0, 5.0)                                              |
+| cornerColor            | color of corner shape (DEPRECATED! Use cornerPainter)              | primaryColor                                                 |
 | lineColor              | color of crop line                                                 | scaffoldBackgroundColor.withOpacity(0.7)                     |
 | lineHeight             | height of crop line                                                | 0.6                                                          |
 | editorMaskColorHandler | call back of editor mask color base on pointerDown                 | scaffoldBackgroundColor.withOpacity(pointerDown ? 0.4 : 0.8) |
@@ -365,6 +366,7 @@ EditorConfig
 | tickerDuration         | duration to begin auto center animation after crop rect is changed | Duration(milliseconds: 400)                                  |
 | cropAspectRatio        | aspect ratio of crop rect                                          | null(custom)                                                 |
 | initCropRectType       | init crop rect base on initial image rect or image layout rect     | imageRect                                                    |
+| cornerPainter          | corner shape                                                       | ExtendedImageCropLayerPainterNinetyDegreesCorner()           |
 
 ### crop aspect ratio
 
@@ -394,6 +396,48 @@ class CropAspectRatios {
 
   /// ratio of width and height is 16 : 9
   static const double ratio16_9 = 16.0 / 9.0;
+}
+```
+
+### corner painter
+
+With `cornerPainter` property you can customize crop layout corners.
+By default is active `ExtendedImageCropLayerPainterNinetyDegreesCorner`. You can pass alternatively `ExtendedImageCropLayerPainterCircleCorner` or extend class `ExtendedImageCropLayerCornerPainter` and create your own corner painter.
+For example this is code for `ExtendedImageCropLayerPainterCircleCorner`:
+
+```dart
+class ExtendedImageCropLayerPainterCircleCorner
+    extends ExtendedImageCropLayerCornerPainter {
+  const ExtendedImageCropLayerPainterCircleCorner({
+    this.color,
+    this.radius = 5.0,
+  }) : super(color);
+
+  // color of corner shape
+  // default theme primaryColor
+  final Color color;
+
+  // radius of corner circle
+  final double radius;
+
+  @override
+  ExtendedImageCropLayerPainterCircleCorner copyWith(
+          {Color color, double radius}) =>
+      ExtendedImageCropLayerPainterCircleCorner(
+          color: color ?? this.color, radius: radius ?? this.radius);
+
+  @override
+  void drawCorners(Canvas canvas, Rect cropRect, Paint defautlPainter) {
+    defautlPainter.color = color;
+    canvas.drawCircle(
+        Offset(cropRect.left, cropRect.top), radius, defautlPainter);
+    canvas.drawCircle(
+        Offset(cropRect.right, cropRect.top), radius, defautlPainter);
+    canvas.drawCircle(
+        Offset(cropRect.left, cropRect.bottom), radius, defautlPainter);
+    canvas.drawCircle(
+        Offset(cropRect.right, cropRect.bottom), radius, defautlPainter);
+  }
 }
 ```
 
