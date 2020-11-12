@@ -4,6 +4,7 @@ import 'dart:ui' as ui;
 import 'package:extended_image/src/extended_image_utils.dart';
 import 'package:extended_image/src/image/extended_raw_image.dart';
 import 'package:extended_image_library/extended_image_library.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import '../extended_image.dart';
@@ -186,6 +187,7 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor> {
         _layerKey.currentState.pointerDown(false);
         widget.pointerDownNotifier.value = false;
       },
+      onPointerSignal: _handlePointerSignal,
       // onPointerCancel: (_) {
       //   pointerDown(false);
       // },
@@ -220,8 +222,9 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor> {
     if (_layerKey.currentState.isAnimating || _layerKey.currentState.isMoving) {
       return;
     }
-    double totalScale = _startingScale * details.scale;
-    final Offset delta = details.focalPoint - _startingOffset;
+    double totalScale = _startingScale * details.scale * _editorConfig.speed;
+    final Offset delta =
+        details.focalPoint * _editorConfig.speed - _startingOffset;
     final double scaleDelta = details.scale / _detailsScale;
     final bool zoomOut = scaleDelta < 1;
     final bool zoomIn = scaleDelta > 1;
@@ -249,6 +252,18 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor> {
         ///we should += delta in case miss delta
         _editActionDetails.delta += delta;
       });
+    }
+  }
+
+  void _handlePointerSignal(PointerSignalEvent event) {
+    if (event is PointerScrollEvent && event.kind == PointerDeviceKind.mouse) {
+      _handleScaleStart(ScaleStartDetails(focalPoint: event.position));
+      final double dy = event.scrollDelta.dy;
+      final double dx = event.scrollDelta.dx;
+      _handleScaleUpdate(ScaleUpdateDetails(
+          focalPoint: event.position,
+          scale: 1.0 +
+              (dy.abs() > dx.abs() ? dy : dx) * _editorConfig.speed / 1000.0));
     }
   }
 
