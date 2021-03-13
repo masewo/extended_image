@@ -716,7 +716,7 @@ class ExtendedImage extends StatefulWidget {
   /// Anti-aliasing alleviates the sawtooth artifact when the image is rotated.
   final bool isAntiAlias;
 
-  final ValueNotifier<bool> pointerDownNotifier;
+  final ValueNotifier<bool>? pointerDownNotifier;
   
   @override
   _ExtendedImageState createState() => _ExtendedImageState();

@@ -23,7 +23,7 @@ class ExtendedImageEditor extends StatefulWidget {
         assert(extendedImageState.imageWidget.image is ExtendedImageProvider,
             'Make sure the image provider is ExtendedImageProvider, we will get raw image data from it'),
         super(key: key);
-  final ValueNotifier<bool> pointerDownNotifier;
+  final ValueNotifier<bool>? pointerDownNotifier;
   final ExtendedImageState extendedImageState;
   @override
   ExtendedImageEditorState createState() => ExtendedImageEditorState();
