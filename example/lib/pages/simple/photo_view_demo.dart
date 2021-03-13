@@ -1,4 +1,4 @@
-import 'package:ff_annotation_route/ff_annotation_route.dart';
+import 'package:ff_annotation_route_core/ff_annotation_route_core.dart';
 import 'package:flutter/material.dart';
 import 'package:extended_image/extended_image.dart';
 
@@ -37,6 +37,7 @@ class _SimplePhotoViewDemoState extends State<SimplePhotoViewDemo> {
         controller: PageController(
           initialPage: 0,
         ),
+        itemCount: images.length,
         itemBuilder: (BuildContext context, int index) {
           return ExtendedImage.network(
             images[index],

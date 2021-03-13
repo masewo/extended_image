@@ -4,7 +4,7 @@ import 'package:extended_image/extended_image.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-import 'package:ff_annotation_route/ff_annotation_route.dart';
+import 'package:ff_annotation_route_core/ff_annotation_route_core.dart';
 import 'package:oktoast/oktoast.dart';
 
 @FFRoute(
@@ -50,7 +50,7 @@ class _CustomImageDemoState extends State<CustomImageDemo>
             title: const Text('CustomImage'),
           ),
           if (!kIsWeb)
-            RaisedButton(
+            TextButton(
               child: const Text('clear all cache'),
               onPressed: () {
                 clearDiskCachedImages().then((bool done) {
