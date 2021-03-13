@@ -170,11 +170,11 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor> {
       child: result,
       onPointerDown: (_) {
         _layerKey.currentState?.pointerDown(true);
-        widget.pointerDownNotifier.value = true;
+        widget.pointerDownNotifier?.value = true;
       },
       onPointerUp: (_) {
         _layerKey.currentState?.pointerDown(false);
-        widget.pointerDownNotifier.value = false;
+        widget.pointerDownNotifier?.value = false;
       },
       onPointerSignal: _handlePointerSignal,
       // onPointerCancel: (_) {
