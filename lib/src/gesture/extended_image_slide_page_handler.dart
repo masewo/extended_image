@@ -10,13 +10,16 @@ import 'extended_image_slide_page.dart';
 
 /// for loading/failed widget
 class ExtendedImageSlidePageHandler extends StatefulWidget {
-  const ExtendedImageSlidePageHandler(this.child,
-      this.extendedImageSlidePageState, this.heroBuilderForSlidingPage);
-  final Widget child;
-  final ExtendedImageSlidePageState extendedImageSlidePageState;
+  const ExtendedImageSlidePageHandler({
+    this.child,
+    this.extendedImageSlidePageState,
+    this.heroBuilderForSlidingPage,
+  });
+  final Widget? child;
+  final ExtendedImageSlidePageState? extendedImageSlidePageState;
 
   ///build Hero only for sliding page
-  final HeroBuilderForSlidingPage heroBuilderForSlidingPage;
+  final HeroBuilderForSlidingPage? heroBuilderForSlidingPage;
   @override
   ExtendedImageSlidePageHandlerState createState() =>
       ExtendedImageSlidePageHandlerState();
@@ -24,7 +27,22 @@ class ExtendedImageSlidePageHandler extends StatefulWidget {
 
 class ExtendedImageSlidePageHandlerState
     extends State<ExtendedImageSlidePageHandler> {
-  Offset _startingOffset;
+  late Offset _startingOffset;
+  ExtendedImageSlidePageState? _extendedImageSlidePageState;
+  @override
+  void didChangeDependencies() {
+    _extendedImageSlidePageState = widget.extendedImageSlidePageState ??
+        context.findAncestorStateOfType<ExtendedImageSlidePageState>();
+    super.didChangeDependencies();
+  }
+
+  @override
+  void didUpdateWidget(covariant ExtendedImageSlidePageHandler oldWidget) {
+    _extendedImageSlidePageState = widget.extendedImageSlidePageState ??
+        context.findAncestorStateOfType<ExtendedImageSlidePageState>();
+    super.didUpdateWidget(oldWidget);
+  }
+
   @override
   Widget build(BuildContext context) {
     Widget result = GestureDetector(
@@ -34,18 +52,15 @@ class ExtendedImageSlidePageHandlerState
       child: widget.child,
       behavior: HitTestBehavior.translucent,
     );
-    if (widget.extendedImageSlidePageState != null) {
+    if (_extendedImageSlidePageState != null) {
       result = widget.heroBuilderForSlidingPage?.call(result) ?? result;
     }
-    if (widget.extendedImageSlidePageState != null &&
-        widget.extendedImageSlidePageState.widget.slideType ==
-            SlideType.onlyImage) {
-      final ExtendedImageSlidePageState extendedImageSlidePageState =
-          widget.extendedImageSlidePageState;
+    if (_extendedImageSlidePageState != null &&
+        _extendedImageSlidePageState!.widget.slideType == SlideType.onlyImage) {
       result = Transform.translate(
-        offset: extendedImageSlidePageState.offset,
+        offset: _extendedImageSlidePageState!.offset,
         child: Transform.scale(
-          scale: extendedImageSlidePageState.scale,
+          scale: _extendedImageSlidePageState!.scale,
           child: result,
         ),
       );
@@ -57,18 +72,18 @@ class ExtendedImageSlidePageHandlerState
     _startingOffset = details.focalPoint;
   }
 
-  Offset _updateSlidePagePreOffset;
+  Offset? _updateSlidePagePreOffset;
   void _handleScaleUpdate(ScaleUpdateDetails details) {
     ///whether gesture page
-    if (widget.extendedImageSlidePageState != null && details.scale == 1.0) {
+    if (_extendedImageSlidePageState != null && details.scale == 1.0) {
       //var offsetDelta = (details.focalPoint - _startingOffset);
 
       final double delta = (details.focalPoint - _startingOffset).distance;
 
       if (doubleCompare(delta, minGesturePageDelta) > 0) {
         _updateSlidePagePreOffset ??= details.focalPoint;
-        widget.extendedImageSlidePageState.slide(
-            details.focalPoint - _updateSlidePagePreOffset,
+        _extendedImageSlidePageState!.slide(
+            details.focalPoint - _updateSlidePagePreOffset!,
             extendedImageSlidePageHandlerState: this);
         _updateSlidePagePreOffset = details.focalPoint;
       }
@@ -76,10 +91,10 @@ class ExtendedImageSlidePageHandlerState
   }
 
   void _handleScaleEnd(ScaleEndDetails details) {
-    if (widget.extendedImageSlidePageState != null &&
-        widget.extendedImageSlidePageState.isSliding) {
+    if (_extendedImageSlidePageState != null &&
+        _extendedImageSlidePageState!.isSliding) {
       _updateSlidePagePreOffset = null;
-      widget.extendedImageSlidePageState.endSlide(details);
+      _extendedImageSlidePageState!.endSlide(details);
       return;
     }
   }

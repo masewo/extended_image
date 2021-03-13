@@ -3,7 +3,7 @@ import 'package:example/main.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:ff_annotation_route/ff_annotation_route.dart';
+import 'package:ff_annotation_route_core/ff_annotation_route_core.dart';
 import 'package:oktoast/oktoast.dart';
 
 @FFRoute(
@@ -39,7 +39,7 @@ class _ImageDemoState extends State<ImageDemo> {
           ),
           Row(
             children: <Widget>[
-              RaisedButton(
+              TextButton(
                 child: const Text('BoxShape.circle'),
                 onPressed: () {
                   setState(() {
@@ -50,7 +50,7 @@ class _ImageDemoState extends State<ImageDemo> {
               Expanded(
                 child: Container(),
               ),
-              RaisedButton(
+              TextButton(
                 child: const Text('BoxShape.rectangle'),
                 onPressed: () {
                   setState(() {
@@ -63,7 +63,7 @@ class _ImageDemoState extends State<ImageDemo> {
           Row(
             children: <Widget>[
               if (!kIsWeb)
-                RaisedButton(
+                TextButton(
                   child: const Text('clear all cache'),
                   onPressed: () {
                     clearDiskCachedImages().then((bool done) {
@@ -77,7 +77,7 @@ class _ImageDemoState extends State<ImageDemo> {
                 child: Container(),
               ),
               if (!kIsWeb)
-                RaisedButton(
+                TextButton(
                   child: const Text('save network image to photo'),
                   onPressed: () {
                     saveNetworkImageToPhoto(url).then((bool done) {

@@ -2,7 +2,7 @@
 
 [![pub package](https://img.shields.io/pub/v/extended_image.svg)](https://pub.dartlang.org/packages/extended_image) [![GitHub stars](https://img.shields.io/github/stars/fluttercandies/extended_image)](https://github.com/fluttercandies/extended_image/stargazers) [![GitHub forks](https://img.shields.io/github/forks/fluttercandies/extended_image)](https://github.com/fluttercandies/extended_image/network) [![GitHub license](https://img.shields.io/github/license/fluttercandies/extended_image)](https://github.com/fluttercandies/extended_image/blob/master/LICENSE) [![GitHub issues](https://img.shields.io/github/issues/fluttercandies/extended_image)](https://github.com/fluttercandies/extended_image/issues) <a target="_blank" href="https://jq.qq.com/?_wv=1027&k=5bcc0gy"><img border="0" src="https://pub.idqqimg.com/wpa/images/group.png" alt="flutter-candies" title="flutter-candies"></a>
 
-文档语言: [English](README.md) | [中文简体](README-ZH.md)
+文档语言: [English](README.md) | 中文简体
 
 强大的官方 Image 扩展组件, 支持加载以及失败显示，缓存网络图片，缩放拖拽图片，图片浏览(微信掘金效果)，滑动退出页面(微信掘金效果)，编辑图片(裁剪旋转翻转)，保存，绘制自定义效果等功能
 
@@ -45,6 +45,31 @@
   - [瀑布流](#%e7%80%91%e5%b8%83%e6%b5%81)
   - [内存回收/可视区域追踪](#%e5%86%85%e5%ad%98%e5%9b%9e%e6%94%b6%e5%8f%af%e8%a7%86%e5%8c%ba%e5%9f%9f%e8%bf%bd%e8%b8%aa)
   - [其他 APIs](#%e5%85%b6%e4%bb%96-apis)
+
+
+## 导入
+
+*  空安全
+
+``` yaml
+environment:
+  sdk: '>=2.12.0 <3.0.0'
+  flutter: '>=2.0'
+dependencies:
+  extended_image: ^3.0.0
+``` 
+
+*  非空安全
+
+1.22.6 到 2.0, Flutter Api 有 breaking change，所以 1.22.6 以下的，请使用非空安全版本
+
+``` yaml
+environment:
+  sdk: '>=2.6.0 <2.12.0'
+  flutter: '>1.17.0 <=1.22.6'
+dependencies:
+  extended_image: ^3.0.0-non-null-safety
+``` 
 
 ## 缓存网络图片
 
@@ -250,17 +275,18 @@ ExtendedImage
 
 GestureConfig
 
-| 参数              | 描述                                                                                                         | 默认值                  |
-| ----------------- | ------------------------------------------------------------------------------------------------------------ | ----------------------- |
-| minScale          | 缩放最小值                                                                                                   | 0.8                     |
-| animationMinScale | 缩放动画最小值，当缩放结束时回到 minScale 值                                                                 | minScale \* 0.8         |
-| maxScale          | 缩放最大值                                                                                                   | 5.0                     |
-| animationMaxScale | 缩放动画最大值，当缩放结束时回到 maxScale 值                                                                 | maxScale \* 1.2         |
-| speed             | 缩放拖拽速度，与用户操作成正比                                                                               | 1.0                     |
-| inertialSpeed     | 拖拽惯性速度，与惯性速度成正比                                                                               | 100                     |
-| cacheGesture      | 是否缓存手势状态，可用于 ExtendedImageGesturePageView 中保留状态，**使用 clearGestureDetailsCache 方法清除** | false                   |
-| inPageView        | 是否使用 ExtendedImageGesturePageView 展示图片                                                               | false                   |
-| initialAlignment  | 当图片的初始化缩放大于 1.0 的时候，根据相对位置初始化图片                                                    | InitialAlignment.center |
+| 参数              | 描述                                                                                                         | 默认值                       |
+| ----------------- | ------------------------------------------------------------------------------------------------------------ | ---------------------------- |
+| minScale          | 缩放最小值                                                                                                   | 0.8                          |
+| animationMinScale | 缩放动画最小值，当缩放结束时回到 minScale 值                                                                 | minScale \* 0.8              |
+| maxScale          | 缩放最大值                                                                                                   | 5.0                          |
+| animationMaxScale | 缩放动画最大值，当缩放结束时回到 maxScale 值                                                                 | maxScale \* 1.2              |
+| speed             | 缩放拖拽速度，与用户操作成正比                                                                               | 1.0                          |
+| inertialSpeed     | 拖拽惯性速度，与惯性速度成正比                                                                               | 100                          |
+| cacheGesture      | 是否缓存手势状态，可用于 ExtendedImageGesturePageView 中保留状态，**使用 clearGestureDetailsCache 方法清除** | false                        |
+| inPageView        | 是否使用 ExtendedImageGesturePageView 展示图片                                                               | false                        |
+| initialAlignment  | 当图片的初始化缩放大于 1.0 的时候，根据相对位置初始化图片                                                    | InitialAlignment.center      |
+| hitTestBehavior   | 设置hittest的行为                                                                                            | HitTestBehavior.deferToChild |
 
 ```dart
 ExtendedImage.network(
@@ -370,7 +396,7 @@ EditorConfig
 | tickerDuration         | 当裁剪框拖拽变化结束之后，多少时间才触发自动适应到中间的动画                       | Duration(milliseconds: 400)                                  |
 | cropAspectRatio        | 裁剪框的宽高比                                                                     | null(无宽高比)                                               |
 | initCropRectType       | 剪切框的初始化类型(根据图片初始化区域或者图片的 layout 区域)                       | imageRect                                                    |
-
+| hitTestBehavior        | 设置hittest的行为                                                                  | HitTestBehavior.deferToChild                                 |
 ### 裁剪框的宽高比
 
 这是一个 double 类型，你可以自定义裁剪框的宽高比。
@@ -404,45 +430,34 @@ class CropAspectRatios {
 }
 ```
 
-### 四角图形画笔
+### 裁剪图层 Painter
 
-使用 `cornerPainter` 来定制四角图形.
-默认的为 `ExtendedImageCropLayerPainterNinetyDegreesCorner`. 你可以使用`ExtendedImageCropLayerPainterCircleCorner` 或者继承 `ExtendedImageCropLayerCornerPainter` 来定义你的自定义四角图形.
-下面是 `ExtendedImageCropLayerPainterCircleCorner` 的演示代码:
+你现在可以通过覆写 [EditorConfig.editorCropLayerPainter] 里面的方法来自定裁剪图层.
 
 ```dart
-class ExtendedImageCropLayerPainterCircleCorner
-    extends ExtendedImageCropLayerCornerPainter {
-  const ExtendedImageCropLayerPainterCircleCorner({
-    this.color,
-    this.radius = 5.0,
-  }) : super(color);
-
-  // color of corner shape
-  // default theme primaryColor
-  final Color color;
-
-  // radius of corner circle
-  final double radius;
-
-  @override
-  ExtendedImageCropLayerPainterCircleCorner copyWith(
-          {Color color, double radius}) =>
-      ExtendedImageCropLayerPainterCircleCorner(
-          color: color ?? this.color, radius: radius ?? this.radius);
-
-  @override
-  void drawCorners(Canvas canvas, Rect cropRect, Paint defautlPainter) {
-    defautlPainter.color = color;
-    canvas.drawCircle(
-        Offset(cropRect.left, cropRect.top), radius, defautlPainter);
-    canvas.drawCircle(
-        Offset(cropRect.right, cropRect.top), radius, defautlPainter);
-    canvas.drawCircle(
-        Offset(cropRect.left, cropRect.bottom), radius, defautlPainter);
-    canvas.drawCircle(
-        Offset(cropRect.right, cropRect.bottom), radius, defautlPainter);
+class EditorCropLayerPainter {
+  const EditorCropLayerPainter();
+  void paint(Canvas canvas, Size size, ExtendedImageCropLayerPainter painter) {
+    paintMask(canvas, size, painter);
+    paintLines(canvas, size, painter);
+    paintCorners(canvas, size, painter);
   }
+
+  /// draw crop layer corners
+  void paintCorners(
+      Canvas canvas, Size size, ExtendedImageCropLayerPainter painter) {
+  }
+
+  /// draw crop layer lines
+  void paintMask(
+      Canvas canvas, Size size, ExtendedImageCropLayerPainter painter) {
+  }
+  
+
+  /// draw crop layer lines
+  void paintLines(
+      Canvas canvas, Size size, ExtendedImageCropLayerPainter painter) {
+  } 
 }
 ```
 
@@ -986,7 +1001,3 @@ ExtendedImage
 | enableMemoryCache           | 是否缓存到内存                           | true  |
 | clearMemoryCacheIfFailed    | 如果图片加载失败，是否清掉内存缓存       | true  |
 | clearMemoryCacheWhenDispose | 如果图片从 tree 中移除，是否清掉内存缓存 | false |
-
-## ☕️Buy me a coffee
-
-![img](http://zmtzawqlp.gitee.io/my_images/images/qrcode.png)

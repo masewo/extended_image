@@ -4,8 +4,7 @@ import 'package:example/common/utils/screen_util.dart';
 import 'package:example/main.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
-
-import 'package:ff_annotation_route/ff_annotation_route.dart';
+import 'package:ff_annotation_route_core/ff_annotation_route_core.dart';
 
 @FFRoute(
   name: 'fluttercandies://paintimage',
@@ -44,7 +43,7 @@ class _PaintImageDemoState extends State<PaintImageDemo> {
           ),
           Row(
             children: <Widget>[
-              RaisedButton(
+              TextButton(
                 child: const Text('ClipHeart'),
                 onPressed: () {
                   setState(() {
@@ -55,7 +54,7 @@ class _PaintImageDemoState extends State<PaintImageDemo> {
               Expanded(
                 child: Container(),
               ),
-              RaisedButton(
+              TextButton(
                 child: const Text('PaintHeart'),
                 onPressed: () {
                   setState(() {

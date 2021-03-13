@@ -1,20 +1,22 @@
 import 'dart:async';
 import 'dart:math';
 import 'dart:ui';
+@FFArgumentImport()
 import 'package:example/common/data/tu_chong_source.dart';
+@FFArgumentImport()
 import 'package:example/common/model/pic_swiper_item.dart';
 import 'package:example/common/text/my_extended_text_selection_controls.dart';
 import 'package:example/common/text/my_special_text_span_builder.dart';
 import 'package:example/common/utils/util.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:extended_text/extended_text.dart';
+import 'package:ff_annotation_route_library/ff_annotation_route_library.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:oktoast/oktoast.dart';
 import 'package:flutter/material.dart' hide Image;
 import 'package:flutter/rendering.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:ff_annotation_route/ff_annotation_route.dart';
 import 'item_builder.dart';
 
 const String attachContent =
@@ -27,10 +29,6 @@ typedef DoubleClickAnimationListener = void Function();
   routeName: 'PicSwiper',
   showStatusBar: false,
   pageRouteType: PageRouteType.transparent,
-  argumentImports: <String>[
-    'import \'common/data/tu_chong_source.dart\';',
-    'import \'common/model/pic_swiper_item.dart\';'
-  ],
 )
 class PicSwiper extends StatefulWidget {
   const PicSwiper({
@@ -558,7 +556,6 @@ class ImageDetail extends StatelessWidget {
       ),
       padding: const EdgeInsets.all(20.0),
       child: Stack(
-        overflow: Overflow.visible,
         children: <Widget>[
           Column(
             mainAxisAlignment: MainAxisAlignment.start,
@@ -594,7 +591,7 @@ class ImageDetail extends StatelessWidget {
                           mainAxisSize: MainAxisSize.min,
                           children: <Widget>[
                             const Text('\u2026 '),
-                            RaisedButton(
+                            TextButton(
                               child: const Text('more'),
                               onPressed: () {
                                 launch(
@@ -605,8 +602,7 @@ class ImageDetail extends StatelessWidget {
                         ),
                       ),
                 selectionEnabled: true,
-                textSelectionControls:
-                    MyExtendedMaterialTextSelectionControls(),
+                selectionControls: MyTextSelectionControls(),
               ),
               const SizedBox(
                 height: 20.0,
