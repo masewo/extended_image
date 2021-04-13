@@ -39,9 +39,8 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor> {
       GlobalKey<ExtendedImageCropLayerState>();
   @override
   void initState() {
-    _initGestureConfig();
-
     super.initState();
+    _initGestureConfig();
   }
 
   void _initGestureConfig() {
@@ -300,10 +299,16 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor> {
 
   ui.Image? get image => widget.extendedImageState.extendedImageInfo?.image;
 
-  Uint8List get rawImageData =>
-      // ignore: always_specify_types
-      (widget.extendedImageState.imageWidget.image as ExtendedImageProvider)
-          .rawImageData;
+  Uint8List get rawImageData {
+    assert(
+        widget.extendedImageState.imageWidget.image is ExtendedImageProvider);
+
+    final ExtendedImageProvider<dynamic> extendedImageProvider =
+        widget.extendedImageState.imageWidget.image
+            // ignore: always_specify_types
+            as ExtendedImageProvider<dynamic>;
+    return extendedImageProvider.rawImageData;
+  }
 
   EditActionDetails? get editAction => _editActionDetails;
 

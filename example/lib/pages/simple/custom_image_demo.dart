@@ -1,4 +1,3 @@
-import 'package:example/common/utils/screen_util.dart';
 import 'package:example/main.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/foundation.dart';
@@ -23,7 +22,7 @@ class CustomImageDemo extends StatefulWidget {
 
 class _CustomImageDemoState extends State<CustomImageDemo>
     with SingleTickerProviderStateMixin {
-  AnimationController _controller;
+  late AnimationController _controller;
   @override
   void initState() {
     _controller = AnimationController(
@@ -76,7 +75,6 @@ class _CustomImageDemoState extends State<CustomImageDemo>
                         'assets/loading.gif',
                         fit: BoxFit.fill,
                       );
-                      break;
                     case LoadState.completed:
                       _controller.forward();
 
@@ -88,11 +86,10 @@ class _CustomImageDemoState extends State<CustomImageDemo>
                         opacity: _controller,
                         child: ExtendedRawImage(
                           image: state.extendedImageInfo?.image,
-                          width: ScreenUtil.instance.setWidth(600),
-                          height: ScreenUtil.instance.setWidth(400),
+                          width: 300,
+                          height: 200,
                         ),
                       );
-                      break;
                     case LoadState.failed:
                       _controller.reset();
                       //remove memory cached
@@ -120,9 +117,7 @@ class _CustomImageDemoState extends State<CustomImageDemo>
                           state.reLoadImage();
                         },
                       );
-                      break;
                   }
-                  return Container();
                 },
               ),
             ),

@@ -1,9 +1,11 @@
 import 'package:example/common/data/tu_chong_repository.dart';
 import 'package:example/common/data/tu_chong_source.dart';
+import 'package:example/common/utils/vm_helper.dart';
 import 'package:example/common/widget/item_builder.dart';
 import 'package:flutter/material.dart';
 import 'package:loading_more_list/loading_more_list.dart';
 import 'package:ff_annotation_route_core/ff_annotation_route_core.dart';
+import 'package:extended_image/extended_image.dart';
 
 @FFRoute(
   name: 'fluttercandies://WaterfallFlowDemo',
@@ -20,7 +22,7 @@ class WaterfallFlowDemo extends StatefulWidget {
 }
 
 class _WaterfallFlowDemoState extends State<WaterfallFlowDemo> {
-  TuChongRepository listSourceRepository;
+  TuChongRepository? listSourceRepository;
   @override
   void initState() {
     listSourceRepository = TuChongRepository();
@@ -30,6 +32,9 @@ class _WaterfallFlowDemoState extends State<WaterfallFlowDemo> {
   @override
   void dispose() {
     listSourceRepository?.dispose();
+    clearMemoryImageCache('WaterfallFlow');
+    // just for test
+    VMHelper().forceGC();
     super.dispose();
   }
 
@@ -51,7 +56,7 @@ class _WaterfallFlowDemoState extends State<WaterfallFlowDemo> {
                 mainAxisSpacing: 5,
               ),
               itemBuilder: buildWaterfallFlowItem,
-              sourceList: listSourceRepository,
+              sourceList: listSourceRepository!,
               padding: const EdgeInsets.all(5.0),
               lastChildLayoutType: LastChildLayoutType.foot,
             ),
