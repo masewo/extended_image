@@ -1,3 +1,9 @@
+## 4.1.0
+
+* Improve:
+  1. add [ExtendedImage.network.cacheMaxAge] to set max age to be cached.
+  2. update demo about hero, make it better when slide out.
+
 ## 4.0.1
 
 * Issues:

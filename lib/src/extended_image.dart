@@ -119,6 +119,7 @@ class ExtendedImage extends StatefulWidget {
     int? maxBytes,
     bool cacheRawData = false,
     String? imageCacheName,
+    Duration? cacheMaxAge,
   })  : assert(cacheWidth == null || cacheWidth > 0),
         assert(cacheHeight == null || cacheHeight > 0),
         image = ExtendedResizeImage.resizeIfNeeded(
@@ -135,6 +136,7 @@ class ExtendedImage extends StatefulWidget {
             printError: printError,
             cacheRawData: cacheRawData,
             imageCacheName: imageCacheName,
+            cacheMaxAge: cacheMaxAge,
           ),
           compressionRatio: compressionRatio,
           maxBytes: maxBytes,
@@ -532,10 +534,10 @@ class ExtendedImage extends StatefulWidget {
   /// whether handle loading progress for network
   final bool handleLoadingProgress;
 
-  ///when image is removed from the tree permanently, whether clear memory cache
+  /// when image is removed from the tree permanently, whether clear memory cache
   final bool clearMemoryCacheWhenDispose;
 
-  ///build Hero only for sliding page
+  /// build Hero only for sliding page
   final HeroBuilderForSlidingPage? heroBuilderForSlidingPage;
 
   /// init EditConfig when image is ready.
@@ -1095,7 +1097,7 @@ class _ExtendedImageState extends State<ExtendedImage>
           ConstrainedBox(constraints: widget.constraints!, child: current);
     }
 
-    ///add for loading/failed/ unGesture image
+    // add for loading/failed/ unGesture image
     if (_slidePageState != null &&
         !(_loadState == LoadState.completed &&
             widget.mode == ExtendedImageMode.gesture)) {
