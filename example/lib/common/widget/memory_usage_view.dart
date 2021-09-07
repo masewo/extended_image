@@ -1,7 +1,8 @@
-import 'dart:async';
+import 'dart:ui';
 
 import 'package:example/common/utils/vm_helper.dart';
 import 'package:flutter/material.dart';
+import 'package:vm_service/vm_service.dart';
 
 class MemoryUsageView extends StatefulWidget {
   @override
@@ -9,158 +10,119 @@ class MemoryUsageView extends StatefulWidget {
 }
 
 class _MemoryUsageViewState extends State<MemoryUsageView> {
-  int start = 0;
-  int end = 0;
-  Timer _timer;
+  double _top = 0;
+  double _left = 0;
   @override
   void initState() {
     super.initState();
+    VMHelper().addListener(_updateMemoryUsage);
 
-    VMHelper().startConnect().whenComplete(() {
-      setState(() {
-        _timer = Timer.periodic(const Duration(seconds: 2), (Timer timer) {
-          VMHelper().updateMemoryUsage().whenComplete(() {
-            setState(() {
-              end = VMHelper().count - 1;
-            });
-          });
-        });
-      });
-    });
+    _top = window.physicalSize.height / window.devicePixelRatio / 2 - 80;
+    _left = window.physicalSize.width / window.devicePixelRatio / 2 - 40;
+  }
+
+  void _updateMemoryUsage() {
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   @override
   void dispose() {
-    _timer.cancel();
+    VMHelper().removeListener(_updateMemoryUsage);
     super.dispose();
   }
-
-  void update() {}
 
   @override
   Widget build(BuildContext context) {
     if (VMHelper().serviceClient == null) {
       return Container();
     }
-    return Column(
-      children: <Widget>[
-        for (IsolateRef key in VMHelper().memoryInfo.keys)
-          IntrinsicHeight(
-            child: Row(
-              children: <Widget>[
-                Text.rich(
-                  TextSpan(
-                    children: <InlineSpan>[
-                      const TextSpan(text: 'IsolateName: '),
-                      TextSpan(text: key.name),
-                      const TextSpan(text: '\nHeapUsage: '),
-                      TextSpan(
-                        text: ByteUtil.toByteString(
-                            VMHelper().memoryInfo[key].heapUsage),
-                      ),
-                      const TextSpan(text: '\nHeapCapacity: '),
-                      TextSpan(
-                        text: ByteUtil.toByteString(
-                            VMHelper().memoryInfo[key].heapCapacity),
-                      ),
-                      const TextSpan(text: '\nExternalUsage: '),
-                      TextSpan(
-                        text: ByteUtil.toByteString(
-                            VMHelper().memoryInfo[key].externalUsage),
-                      ),
-                    ],
-                  ),
-                ),
-                Expanded(
-                    child: Container(
-                  height: 200,
-                  padding: const EdgeInsets.all(8.0),
-                  child: CustomPaint(
-                    painter: MemoryUsageViewPainter(
-                      start,
-                      end,
-                      VMHelper().historyMemoryInfo[key],
-                    ),
-                  ),
-                )),
+    final MemoryUsage main = VMHelper().mainMemoryUsage;
+
+    return Positioned(
+      top: _top,
+      left: _left,
+      child: GestureDetector(
+        onPanUpdate: (DragUpdateDetails dragUpdateDetails) {
+          setState(() {
+            _top += dragUpdateDetails.delta.dy;
+            _left += dragUpdateDetails.delta.dx;
+          });
+        },
+        child: DefaultTextStyle(
+          style: TextStyle(fontSize: 10, color: Colors.white.withOpacity(0.68)),
+          child: Container(
+            decoration: ShapeDecoration(
+              color: Colors.black.withOpacity(0.8),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(6),
+              ),
+              shadows: <BoxShadow>[
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.5),
+                  blurRadius: 4,
+                  offset: const Offset(0, 2),
+                )
               ],
             ),
-          )
-      ],
+            padding: const EdgeInsets.all(8.0),
+            child: IntrinsicWidth(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.max,
+                children: <Widget>[
+                  const Text('Used: '),
+                  const SizedBox(
+                    height: 5,
+                  ),
+                  Text(
+                    ByteUtil.toByteString(main.heapUsage!),
+                    style: const TextStyle(
+                      color: Colors.red,
+                      height: 1.4,
+                      fontSize: 16,
+                    ),
+                  ),
+                  Divider(
+                    color: Colors.white.withOpacity(0.1),
+                    thickness: 1,
+                  ),
+                  const Text('Capacity: '),
+                  const SizedBox(
+                    height: 5,
+                  ),
+                  Text(
+                    ByteUtil.toByteString(main.heapCapacity!),
+                    style: const TextStyle(
+                      color: Colors.blue,
+                      height: 1.4,
+                      fontSize: 16,
+                    ),
+                  ),
+                  Divider(
+                    color: Colors.white.withOpacity(0.1),
+                    thickness: 1,
+                  ),
+                  const Text('External: '),
+                  const SizedBox(
+                    height: 5,
+                  ),
+                  Text(
+                    ByteUtil.toByteString(main.externalUsage!),
+                    style: const TextStyle(
+                      color: Colors.green,
+                      height: 1.4,
+                      fontSize: 16,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
     );
-  }
-}
-
-class MemoryUsageViewPainter extends CustomPainter {
-  MemoryUsageViewPainter(this.start, this.end, this.memoryUsages);
-  final int end;
-  final int start;
-  final List<List<int>> memoryUsages;
-  @override
-  void paint(Canvas canvas, Size size) {
-    canvas.drawRect(
-        Offset.zero & size,
-        Paint()
-          ..color = Colors.green.withOpacity(0.3)
-          ..style = PaintingStyle.fill);
-    drawLine(
-      canvas,
-      size,
-      memoryUsages[0].getRange(start, end).toList(),
-      Colors.red,
-    );
-    drawLine(
-      canvas,
-      size,
-      memoryUsages[1].getRange(start, end).toList(),
-      Colors.blue,
-    );
-    drawLine(
-      canvas,
-      size,
-      memoryUsages[2].getRange(start, end).toList(),
-      Colors.green,
-    );
-  }
-
-  void drawLine(Canvas canvas, Size size, List<int> data, Color color) {
-    if (data.isEmpty) {
-      return;
-    }
-    final int max = data
-        .reduce((int value, int element) => value > element ? value : element);
-    final int min = data
-        .reduce((int value, int element) => value < element ? value : element);
-
-    final double x = size.width / 30;
-    final Path path = Path();
-
-    for (int i = 0; i < data.length; i++) {
-      if (i == 0) {
-        path.moveTo(x * i, getY(min, max, size.height, data[i]));
-      } else {
-        path.lineTo(x * i, getY(min, max, size.height, data[i]));
-      }
-    }
-    path.fillType = PathFillType.nonZero;
-
-    canvas.drawPath(
-        path,
-        Paint()
-          ..color = color
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = 1);
-  }
-
-  double getY(int min, int max, double height, int value) {
-    if (min == max) {
-      return height / 2.0;
-    }
-    return (value - min) * height / (max - min);
-  }
-
-  @override
-  bool shouldRepaint(covariant MemoryUsageViewPainter oldDelegate) {
-    return oldDelegate.start != start || oldDelegate.end != end;
   }
 }

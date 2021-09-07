@@ -4,7 +4,6 @@ import 'dart:ui';
 
 import 'package:example/common/image_picker/image_picker.dart';
 import 'package:example/common/utils/crop_editor_helper.dart';
-import 'package:example/common/utils/screen_util.dart';
 import 'package:example/common/widget/common_widget.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:ff_annotation_route_core/ff_annotation_route_core.dart';
@@ -46,10 +45,10 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
     AspectRatioItem(text: '16*9', value: CropAspectRatios.ratio16_9),
     AspectRatioItem(text: '9*16', value: CropAspectRatios.ratio9_16)
   ];
-  AspectRatioItem _aspectRatio;
+  AspectRatioItem? _aspectRatio;
   bool _cropping = false;
 
-  EditorCropLayerPainter _cropLayerPainter;
+  EditorCropLayerPainter? _cropLayerPainter;
 
   @override
   void initState() {
@@ -84,21 +83,22 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
         Expanded(
           child: _memoryImage != null
               ? ExtendedImage.memory(
-                  _memoryImage,
+                  _memoryImage!,
                   fit: BoxFit.contain,
                   mode: ExtendedImageMode.editor,
                   enableLoadState: true,
                   extendedImageEditorKey: editorKey,
-                  initEditorConfigHandler: (ExtendedImageState state) {
+                  initEditorConfigHandler: (ExtendedImageState? state) {
                     return EditorConfig(
                       maxScale: 8.0,
                       cropRectPadding: const EdgeInsets.all(20.0),
                       hitTestSize: 20.0,
-                      cropLayerPainter: _cropLayerPainter,
+                      cropLayerPainter: _cropLayerPainter!,
                       initCropRectType: InitCropRectType.imageRect,
-                      cropAspectRatio: _aspectRatio.value,
+                      cropAspectRatio: _aspectRatio!.value,
                     );
                   },
+                  cacheRawData: true,
                 )
               : ExtendedImage.asset(
                   'assets/image.jpg',
@@ -106,21 +106,22 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
                   mode: ExtendedImageMode.editor,
                   enableLoadState: true,
                   extendedImageEditorKey: editorKey,
-                  initEditorConfigHandler: (ExtendedImageState state) {
+                  initEditorConfigHandler: (ExtendedImageState? state) {
                     return EditorConfig(
                       maxScale: 8.0,
                       cropRectPadding: const EdgeInsets.all(20.0),
                       hitTestSize: 20.0,
-                      cropLayerPainter: _cropLayerPainter,
+                      cropLayerPainter: _cropLayerPainter!,
                       initCropRectType: InitCropRectType.imageRect,
-                      cropAspectRatio: _aspectRatio.value,
+                      cropAspectRatio: _aspectRatio!.value,
                     );
                   },
+                  cacheRawData: true,
                 ),
         ),
       ]),
       bottomNavigationBar: BottomAppBar(
-        color: Colors.lightBlue,
+        //color: Colors.lightBlue,
         shape: const CircularNotchedRectangle(),
         child: ButtonTheme(
           minWidth: 0.0,
@@ -146,7 +147,7 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
                               child: SizedBox(),
                             ),
                             SizedBox(
-                              height: ScreenUtil.instance.setWidth(200.0),
+                              height: 100,
                               child: ListView.builder(
                                 shrinkWrap: true,
                                 scrollDirection: Axis.horizontal,
@@ -184,7 +185,7 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
                 ),
                 textColor: Colors.white,
                 onPressed: () {
-                  editorKey.currentState.flip();
+                  editorKey.currentState!.flip();
                 },
               ),
               FlatButtonWithIcon(
@@ -195,7 +196,7 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
                 ),
                 textColor: Colors.white,
                 onPressed: () {
-                  editorKey.currentState.rotate(right: false);
+                  editorKey.currentState!.rotate(right: false);
                 },
               ),
               FlatButtonWithIcon(
@@ -206,7 +207,7 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
                 ),
                 textColor: Colors.white,
                 onPressed: () {
-                  editorKey.currentState.rotate(right: true);
+                  editorKey.currentState!.rotate(right: true);
                 },
               ),
               FlatButtonWithIcon(
@@ -253,11 +254,30 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
                         ),
                         value: const CustomEditorCropLayerPainter(),
                       ),
+                      const PopupMenuDivider(),
+                      PopupMenuItem<EditorCropLayerPainter>(
+                        child: Row(
+                          children: const <Widget>[
+                            Icon(
+                              CupertinoIcons.circle,
+                              color: Colors.blue,
+                            ),
+                            SizedBox(
+                              width: 5,
+                            ),
+                            Text('Circle'),
+                          ],
+                        ),
+                        value: const CircleEditorCropLayerPainter(),
+                      ),
                     ];
                   },
                   onSelected: (EditorCropLayerPainter value) {
                     if (_cropLayerPainter != value) {
                       setState(() {
+                        if (value is CircleEditorCropLayerPainter) {
+                          _aspectRatio = _aspectRatios[2];
+                        }
                         _cropLayerPainter = value;
                       });
                     }
@@ -265,7 +285,7 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
                 ),
                 textColor: Colors.white,
                 onPressed: () {
-                  popupMenuKey.currentState.showButtonMenu();
+                  popupMenuKey.currentState!.showButtonMenu();
                 },
               ),
               FlatButtonWithIcon(
@@ -276,7 +296,7 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
                 ),
                 textColor: Colors.white,
                 onPressed: () {
-                  editorKey.currentState.reset();
+                  editorKey.currentState!.reset();
                 },
               ),
             ],
@@ -408,12 +428,12 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
 
       //await showBusyingDialog();
 
-      Uint8List fileData;
+      Uint8List? fileData;
 
       /// native library
       if (useNative) {
-        fileData = Uint8List.fromList(await cropImageDataWithNativeLibrary(
-            state: editorKey.currentState));
+        fileData = await cropImageDataWithNativeLibrary(
+            state: editorKey.currentState!);
       } else {
         ///delay due to cropImageDataWithDartLibrary is time consuming on main thread
         ///it will block showBusyingDialog
@@ -421,11 +441,11 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
         //await Future.delayed(Duration(milliseconds: 200));
 
         ///if you don't want to block ui, use compute/isolate,but it costs more time.
-        fileData = Uint8List.fromList(
-            await cropImageDataWithDartLibrary(state: editorKey.currentState));
+        fileData =
+            await cropImageDataWithDartLibrary(state: editorKey.currentState!);
       }
-      final String filePath =
-          await ImageSaver.save('extended_image_cropped_image.jpg', fileData);
+      final String? filePath =
+          await ImageSaver.save('extended_image_cropped_image.jpg', fileData!);
       // var filePath = await ImagePickerSaver.saveFile(fileData: fileData);
 
       msg = 'save image : $filePath';
@@ -439,13 +459,13 @@ class _ImageEditorDemoState extends State<ImageEditorDemo> {
     _cropping = false;
   }
 
-  Uint8List _memoryImage;
+  Uint8List? _memoryImage;
   Future<void> _getImage() async {
     _memoryImage = await pickImage(context);
     //when back to current page, may be editorKey.currentState is not ready.
     Future<void>.delayed(const Duration(milliseconds: 200), () {
       setState(() {
-        editorKey.currentState.reset();
+        editorKey.currentState!.reset();
       });
     });
   }
@@ -465,5 +485,44 @@ class CustomEditorCropLayerPainter extends EditorCropLayerPainter {
     canvas.drawCircle(Offset(cropRect.right, cropRect.top), radius, paint);
     canvas.drawCircle(Offset(cropRect.left, cropRect.bottom), radius, paint);
     canvas.drawCircle(Offset(cropRect.right, cropRect.bottom), radius, paint);
+  }
+}
+
+class CircleEditorCropLayerPainter extends EditorCropLayerPainter {
+  const CircleEditorCropLayerPainter();
+
+  @override
+  void paintCorners(
+      Canvas canvas, Size size, ExtendedImageCropLayerPainter painter) {
+    // do nothing
+  }
+
+  @override
+  void paintMask(
+      Canvas canvas, Size size, ExtendedImageCropLayerPainter painter) {
+    final Rect rect = Offset.zero & size;
+    final Rect cropRect = painter.cropRect;
+    final Color maskColor = painter.maskColor;
+    canvas.saveLayer(rect, Paint());
+    canvas.drawRect(
+        rect,
+        Paint()
+          ..style = PaintingStyle.fill
+          ..color = maskColor);
+    canvas.drawCircle(cropRect.center, cropRect.width / 2.0,
+        Paint()..blendMode = BlendMode.clear);
+    canvas.restore();
+  }
+
+  @override
+  void paintLines(
+      Canvas canvas, Size size, ExtendedImageCropLayerPainter painter) {
+    final Rect cropRect = painter.cropRect;
+    if (painter.pointerDown) {
+      canvas.save();
+      canvas.clipPath(Path()..addOval(cropRect));
+      super.paintLines(canvas, size, painter);
+      canvas.restore();
+    }
   }
 }

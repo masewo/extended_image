@@ -43,14 +43,18 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
   Rect get layoutRect => widget.layoutRect;
 
   Rect? get cropRect => widget.editActionDetails.cropRect;
-  set cropRect(Rect? value) => widget.editActionDetails.cropRect = value;
+  set cropRect(Rect? value) {
+    widget.editActionDetails.cropRect = value;
+    widget.editorConfig.editActionDetailsIsChanged
+        ?.call(widget.editActionDetails);
+  }
 
   bool get isAnimating => _rectTweenController.isAnimating;
   bool get isMoving => _currentMoveType != null;
 
   Timer? _timer;
   bool _pointerDown = false;
-  Animation<Rect>? _rectAnimation;
+  Animation<Rect?>? _rectAnimation;
   late AnimationController _rectTweenController;
   _MoveType? _currentMoveType;
   @override
@@ -189,7 +193,7 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
             left: cropRect!.left + gWidth,
             child: Container(
               height: gWidth * 2,
-              width: cropRect!.width - gWidth * 2,
+              width: max(cropRect!.width - gWidth * 2, gWidth * 2),
               child: GestureDetector(
                 behavior: HitTestBehavior.translucent,
                 onVerticalDragUpdate: (DragUpdateDetails details) {
@@ -206,7 +210,7 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
             top: cropRect!.top + gWidth,
             left: cropRect!.left - gWidth,
             child: Container(
-              height: cropRect!.height - gWidth * 2,
+              height: max(cropRect!.height - gWidth * 2, gWidth * 2),
               width: gWidth * 2,
               child: GestureDetector(
                 behavior: HitTestBehavior.translucent,
@@ -225,7 +229,7 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
             left: cropRect!.left + gWidth,
             child: Container(
               height: gWidth * 2,
-              width: cropRect!.width - gWidth * 2,
+              width: max(cropRect!.width - gWidth * 2, gWidth * 2),
               child: GestureDetector(
                 behavior: HitTestBehavior.translucent,
                 onVerticalDragUpdate: (DragUpdateDetails details) {
@@ -242,7 +246,7 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
             top: cropRect!.top + gWidth,
             left: cropRect!.right - gWidth,
             child: Container(
-              height: cropRect!.height - gWidth * 2,
+              height: max(cropRect!.height - gWidth * 2, gWidth * 2),
               width: gWidth * 2,
               child: GestureDetector(
                 behavior: HitTestBehavior.translucent,
@@ -495,9 +499,8 @@ class ExtendedImageCropLayerState extends State<ExtendedImageCropLayer>
       final Rect newScreenCropRect =
           centerCropRect.shift(widget.editActionDetails.layoutTopLeft!);
 
-      _rectAnimation = _rectTweenController.drive<Rect>(
-          RectTween(begin: oldScreenCropRect, end: newScreenCropRect)
-              as Animatable<Rect>);
+      _rectAnimation = _rectTweenController.drive<Rect?>(
+          RectTween(begin: oldScreenCropRect, end: newScreenCropRect));
       _rectTweenController.reset();
       _rectTweenController.forward();
     });
