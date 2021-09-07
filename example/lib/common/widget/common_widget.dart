@@ -1,20 +1,17 @@
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:example/common/utils/screen_util.dart';
 
 class FlatButtonWithIcon extends TextButton with MaterialButtonWithIconMixin {
   FlatButtonWithIcon({
-    Key key,
-    @required VoidCallback onPressed,
+    Key? key,
+    required VoidCallback onPressed,
     Clip clipBehavior = Clip.none,
-    FocusNode focusNode,
-    Color textColor,
-    @required Widget icon,
-    @required Widget label,
-  })  : assert(icon != null),
-        assert(label != null),
-        super(
+    FocusNode? focusNode,
+    Color? textColor,
+    required Widget icon,
+    required Widget label,
+  }) : super(
           key: key,
           onPressed: onPressed,
           clipBehavior: clipBehavior,
@@ -38,21 +35,20 @@ class FlatButtonWithIcon extends TextButton with MaterialButtonWithIconMixin {
 
 class AspectRatioItem {
   AspectRatioItem({this.value, this.text});
-  final String text;
-  final double value;
+  final String? text;
+  final double? value;
 }
 
 class AspectRatioWidget extends StatelessWidget {
   const AspectRatioWidget(
       {this.aspectRatioS, this.aspectRatio, this.isSelected = false});
-  final String aspectRatioS;
-  final double aspectRatio;
+  final String? aspectRatioS;
+  final double? aspectRatio;
   final bool isSelected;
   @override
   Widget build(BuildContext context) {
     return CustomPaint(
-      size: Size(ScreenUtil.instance.setWidth(200.0),
-          ScreenUtil.instance.setWidth(200.0)),
+      size: const Size(100, 100),
       painter: AspectRatioPainter(
           aspectRatio: aspectRatio,
           aspectRatioS: aspectRatioS,
@@ -64,8 +60,8 @@ class AspectRatioWidget extends StatelessWidget {
 class AspectRatioPainter extends CustomPainter {
   AspectRatioPainter(
       {this.aspectRatioS, this.aspectRatio, this.isSelected = false});
-  final String aspectRatioS;
-  final double aspectRatio;
+  final String? aspectRatioS;
+  final double? aspectRatio;
   final bool isSelected;
   @override
   void paint(Canvas canvas, Size size) {
@@ -76,7 +72,7 @@ class AspectRatioPainter extends CustomPainter {
       ..color = color
       ..style = PaintingStyle.fill;
     final double aspectRatioResult =
-        (aspectRatio != null && aspectRatio > 0.0) ? aspectRatio : 1.0;
+        (aspectRatio != null && aspectRatio! > 0.0) ? aspectRatio! : 1.0;
     canvas.drawRect(
         getDestinationRect(
             rect: const EdgeInsets.all(10.0).deflateRect(rect),
@@ -108,5 +104,20 @@ class AspectRatioPainter extends CustomPainter {
         (oldDelegate.isSelected != isSelected ||
             oldDelegate.aspectRatioS != aspectRatioS ||
             oldDelegate.aspectRatio != aspectRatio);
+  }
+}
+
+class CommonCircularProgressIndicator extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      alignment: Alignment.center,
+      color: Colors.grey.withOpacity(0.8),
+      child: CircularProgressIndicator(
+        strokeWidth: 2.0,
+        valueColor:
+            AlwaysStoppedAnimation<Color>(Theme.of(context).primaryColor),
+      ),
+    );
   }
 }

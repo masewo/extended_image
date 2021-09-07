@@ -27,7 +27,7 @@ class ZoomImageDemo extends StatelessWidget {
               IconButton(
                 icon: const Icon(Icons.restore),
                 onPressed: () {
-                  gestureKey.currentState.reset();
+                  gestureKey.currentState!.reset();
                   //you can also change zoom manual
                   //gestureKey.currentState.gestureDetails=GestureDetails();
                 },
@@ -51,7 +51,8 @@ class ZoomImageDemo extends StatelessWidget {
                   initialScale: 1.0,
                   inPageView: false,
                   initialAlignment: InitialAlignment.center,
-                  gestureDetailsIsChanged: (GestureDetails details) {
+                  reverseMousePointerScrollDirection: true,
+                  gestureDetailsIsChanged: (GestureDetails? details) {
                     //print(details?.totalScale);
                   },
                 );

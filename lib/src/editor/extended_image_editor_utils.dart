@@ -378,6 +378,7 @@ class EditorConfig {
     this.speed = 1.0,
     this.hitTestBehavior = HitTestBehavior.deferToChild,
     this.editActionDetailsIsChanged,
+    this.reverseMousePointerScrollDirection = false,
   })  : assert(lineHeight > 0.0),
         assert(hitTestSize > 0.0),
         assert(maxScale > 0.0),
@@ -435,6 +436,12 @@ class EditorConfig {
 
   /// Speed for zoom/pan
   final double speed;
+
+  /// reverse mouse pointer scroll deirection
+  /// false: zoom int => down, zoom out => up
+  /// true: zoom int => up, zoom out => down
+  /// default is false
+  final bool reverseMousePointerScrollDirection;
 }
 
 class CropAspectRatios {

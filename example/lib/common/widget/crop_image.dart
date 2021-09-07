@@ -2,7 +2,7 @@ import 'dart:math';
 import 'dart:ui' as ui show Image;
 import 'package:example/common/data/tu_chong_source.dart';
 import 'package:example/common/model/pic_swiper_item.dart';
-import 'package:example/common/utils/screen_util.dart';
+import 'package:example/common/widget/common_widget.dart';
 import 'package:example/example_routes.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
@@ -14,12 +14,12 @@ import 'package:flutter/material.dart';
 
 class CropImage extends StatelessWidget {
   const CropImage({
-    @required this.index,
-    @required this.tuChongItem,
+    required this.index,
+    required this.tuChongItem,
     this.knowImageSize,
   });
   final TuChongItem tuChongItem;
-  final bool knowImageSize;
+  final bool? knowImageSize;
   final int index;
   @override
   Widget build(BuildContext context) {
@@ -27,14 +27,14 @@ class CropImage extends StatelessWidget {
       return Container();
     }
 
-    final double num300 = ScreenUtil.instance.setWidth(300);
-    final double num400 = ScreenUtil.instance.setWidth(400);
+    const double num300 = 150;
+    const double num400 = 200;
     double height = num300;
     double width = num400;
-    final ImageItem imageItem = tuChongItem.images[index];
-    if (knowImageSize) {
-      height = imageItem.height.toDouble();
-      width = imageItem.width.toDouble();
+    final ImageItem imageItem = tuChongItem.images![index];
+    if (knowImageSize!) {
+      height = imageItem.height!.toDouble();
+      width = imageItem.width!.toDouble();
       final double n = height / width;
       if (n >= 4 / 3) {
         width = num300;
@@ -52,19 +52,12 @@ class CropImage extends StatelessWidget {
     return ExtendedImage.network(imageItem.imageUrl,
         width: width,
         clearMemoryCacheWhenDispose: false,
+        imageCacheName: 'CropImage',
         height: height, loadStateChanged: (ExtendedImageState state) {
-      Widget widget;
+      Widget? widget;
       switch (state.extendedImageLoadState) {
         case LoadState.loading:
-          widget = Container(
-            color: Colors.grey,
-            alignment: Alignment.center,
-            child: CircularProgressIndicator(
-              strokeWidth: 2.0,
-              valueColor:
-                  AlwaysStoppedAnimation<Color>(Theme.of(context).primaryColor),
-            ),
-          );
+          widget = CommonCircularProgressIndicator();
           break;
         case LoadState.completed:
           //if you can't konw image size before build,
@@ -72,15 +65,16 @@ class CropImage extends StatelessWidget {
           //so maybe your loading widget size will not the same
           //as image actual size, set returnLoadStateChangedWidget=true,so that
           //image will not to be limited by size which you set for ExtendedImage first time.
-          state.returnLoadStateChangedWidget = !knowImageSize;
+          state.returnLoadStateChangedWidget = !knowImageSize!;
 
           ///if you don't want override completed widget
           ///please return null or state.completedWidget
           //return null;
           //return state.completedWidget;
           widget = Hero(
-              tag: imageItem.imageUrl,
-              child: buildImage(state.extendedImageInfo.image, num300, num400));
+            tag: imageItem.imageUrl,
+            child: buildImage(state.extendedImageInfo!.image, num300, num400),
+          );
 
           break;
         case LoadState.failed:
@@ -109,20 +103,18 @@ class CropImage extends StatelessWidget {
           );
           break;
       }
-      if (index == 8 && tuChongItem.images.length > 9) {
-        widget = Stack(
-          children: <Widget>[
-            widget,
-            Container(
-              color: Colors.grey.withOpacity(0.2),
-              alignment: Alignment.center,
-              child: Text(
-                '+${tuChongItem.images.length - 9}',
-                style: const TextStyle(fontSize: 18.0, color: Colors.white),
-              ),
-            )
-          ],
-        );
+      if (index == 8 && tuChongItem.images!.length > 9) {
+        widget = Stack(children: <Widget>[
+          widget,
+          Container(
+            color: Colors.grey.withOpacity(0.2),
+            alignment: Alignment.center,
+            child: Text(
+              '+${tuChongItem.images!.length - 9}',
+              style: const TextStyle(fontSize: 18.0, color: Colors.white),
+            ),
+          )
+        ]);
       }
 
       widget = GestureDetector(
@@ -131,7 +123,7 @@ class CropImage extends StatelessWidget {
           Navigator.pushNamed(context, Routes.fluttercandiesPicswiper,
               arguments: <String, dynamic>{
                 'index': index,
-                'pics': tuChongItem.images
+                'pics': tuChongItem.images!
                     .map<PicSwiperItem>((ImageItem f) =>
                         PicSwiperItem(picUrl: f.imageUrl, des: f.title))
                     .toList(),
@@ -146,16 +138,17 @@ class CropImage extends StatelessWidget {
 
   Widget buildImage(ui.Image image, double num300, double num400) {
     final double n = image.height / image.width;
-    if (tuChongItem.images.length == 1) {
+    if (tuChongItem.images!.length == 1) {
       return ExtendedRawImage(image: image, fit: BoxFit.cover);
     } else if (n >= 4 / 3) {
       Widget imageWidget = ExtendedRawImage(
-          image: image,
-          width: num300,
-          height: num400,
-          fit: BoxFit.fill,
-          sourceRect: Rect.fromLTWH(
-              0.0, 0.0, image.width.toDouble(), 4 * image.width / 3));
+        image: image,
+        width: num300,
+        height: num400,
+        fit: BoxFit.fill,
+        sourceRect: Rect.fromLTWH(
+            0.0, 0.0, image.width.toDouble(), 4 * image.width / 3),
+      );
       if (n >= 4) {
         imageWidget = Container(
           width: num300,

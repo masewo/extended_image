@@ -32,7 +32,7 @@ class Routes {
   ///
   /// [description] : 'show how to reduce memory usage.'
   ///
-  /// [exts] : {group: Complex, order: 1}
+  /// [exts] : {group: Complex, order: 3}
   static const String fluttercandiesMemoryUsageDemo =
       'fluttercandies://MemoryUsageDemo';
 
@@ -68,7 +68,7 @@ class Routes {
   ///
   /// [constructors] :
   ///
-  /// DemoGroupPage : [MapEntry<String, List<DemoRouteResult>> keyValue]
+  /// DemoGroupPage : [MapEntry<String, List<DemoRouteResult>>(required) keyValue]
   static const String fluttercandiesDemogrouppage =
       'fluttercandies://demogrouppage';
 
@@ -162,7 +162,7 @@ class Routes {
   ///
   /// [constructors] :
   ///
-  /// PicSwiper : [int index, List<PicSwiperItem> pics, TuChongItem tuChongItem]
+  /// PicSwiper : [int? index, List<PicSwiperItem>? pics, TuChongItem? tuChongItem]
   ///
   /// [showStatusBar] : false
   ///
@@ -202,7 +202,7 @@ class Routes {
   ///
   /// [constructors] :
   ///
-  /// SlidePage : [String url]
+  /// SlidePage : [String? url]
   ///
   /// [pageRouteType] : PageRouteType.transparent
   static const String fluttercandiesSlidepageitem =
