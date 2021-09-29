@@ -1,13 +1,31 @@
+
+## 5.1.0
+
+* Improve:
+  add [ExtendedPageController.shouldIgnorePointerWhenScrolling] to solve issue that we can's zoom image before [PageView] stop scroll in two way.  
+
+## 5.0.0
+
+* Improve:
+  1. solve gesture conflict between Scale and Horizontal/Vertical drag.
+  2. support to set page spacing. [ExtendedPageController.pageSpacing]
+  3. add [ExtendedImage.opacity].
+  4. fix that we can't zoom image before [PageView] stop scroll.
+
+* Breaking change:
+  1. use [ExtendedPageController] instead of [PageController].
+  2. use [ExtendedImageGesturePageView.canScrollPage] instead of [ExtendedImageGesturePageView.canMovePage].
+
 ## 4.2.1
 
 * Improve:
-  fix description of reverseMousePointerScrollDirection
+  1. fix description of reverseMousePointerScrollDirection
 
 ## 4.2.0
 
 * Issues:
-  fix issue that inverse zoom by mouse wheel.(#382)
-  fix issue that crop_layer with/height is negative
+  1. fix issue that inverse zoom by mouse wheel.(#382)
+  2. fix issue that crop_layer with/height is negative
 
 ## 4.1.0
 
