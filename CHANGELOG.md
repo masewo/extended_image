@@ -1,4 +1,17 @@
 
+## 5.1.3
+
+* Issues:
+  1. fix issue that solve gesture conflict between MovePage and vertical pan.
+
+## 5.1.2
+
+* Issues:
+  1. fix issue that mouse wheel/double tap are not working.(#404)
+
+## 5.1.1
+
+* Bumping flutter sdk minimum version to 2.5.0
 ## 5.1.0
 
 * Improve:
