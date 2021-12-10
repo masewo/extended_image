@@ -1,3 +1,12 @@
+## 6.0.1
+
+* Issues:
+  Fix VelocityTracker is not type ExtendedVelocityTracker
+
+## 6.0.0
+
+* Breaking change:
+  Migrate to 2.8
 
 ## 5.1.3
 
