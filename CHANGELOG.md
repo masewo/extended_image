@@ -1,3 +1,14 @@
+## 6.0.2+1
+
+* Issues:
+  1. Hide `FileImage` from `extended_image_library` explicitly.
+
+## 6.0.2
+
+* Issues:
+  1. Remove the deprecated constructor for the `ExtendedVelocityTracker`. (#460)
+  2. Hide `File` from `extended_image_library` explicitly.
+
 ## 6.0.1
 
 * Issues:
