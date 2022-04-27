@@ -1004,7 +1004,7 @@ class _ExtendedImageState extends State<ExtendedImage>
   void dispose() {
     assert(_imageStream != null);
 
-    WidgetsBinding.instance!.removeObserver(this);
+    WidgetsBinding.instance.removeObserver(this);
     _stopListeningToStream();
     _completerHandle?.dispose();
     _scrollAwareContext.dispose();
@@ -1033,7 +1033,7 @@ class _ExtendedImageState extends State<ExtendedImage>
     super.initState();
     returnLoadStateChangedWidget = false;
     _loadState = LoadState.loading;
-    WidgetsBinding.instance!.addObserver(this);
+    WidgetsBinding.instance.addObserver(this);
     _scrollAwareContext = DisposableBuildContext<State<ExtendedImage>>(this);
   }
 
@@ -1216,7 +1216,7 @@ class _ExtendedImageState extends State<ExtendedImage>
 
   void _updateInvertColors() {
     _invertColors = MediaQuery.maybeOf(context)?.invertColors ??
-        SemanticsBinding.instance!.accessibilityFeatures.invertColors;
+        SemanticsBinding.instance.accessibilityFeatures.invertColors;
   }
 
   void _updateSourceStream(ImageStream newStream, {bool rebuild = false}) {
