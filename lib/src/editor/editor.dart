@@ -119,6 +119,17 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor> {
                 layoutRect = padding.deflateRect(layoutRect);
 
                 if (_editActionDetails!.cropRect == null) {
+                  final AlignmentGeometry alignment =
+                      widget.extendedImageState.imageWidget.alignment;
+                  //matchTextDirection: extendedImage.matchTextDirection,
+                  //don't support TextDirection for editor
+                  final TextDirection? textDirection =
+                      //extendedImage.matchTextDirection ||
+                      alignment is! Alignment
+                          ? Directionality.of(context)
+                          : null;
+                  final Alignment resolvedAlignment =
+                      alignment.resolve(textDirection);
                   final Rect destinationRect = getDestinationRect(
                       rect: layoutRect,
                       inputSize: Size(
@@ -132,8 +143,7 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor> {
                       fit: widget.extendedImageState.imageWidget.fit,
                       centerSlice:
                           widget.extendedImageState.imageWidget.centerSlice,
-                      alignment:
-                          widget.extendedImageState.imageWidget.alignment,
+                      alignment: resolvedAlignment,
                       scale:
                           widget.extendedImageState.extendedImageInfo!.scale);
 
