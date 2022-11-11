@@ -4,7 +4,7 @@
 
 Language: English| [中文简体](README-ZH.md)
 
-A powerful official extension library of image, which support placeholder(loading)/ failed state, cache network, zoom pan image, photo view, slide out page, editor(crop,rotate,flip), paint custom etc.
+A powerful official extension library of images, which supports placeholder(loading)/ failed state, cache network, zoom pan image, photo view, slide-out page, editor (crop, rotate, flip), paint custom etc.
 
 [Web demo for ExtendedImage](https://fluttercandies.github.io/extended_image/)
 
@@ -39,6 +39,7 @@ A powerful official extension library of image, which support placeholder(loadin
     - [save network](#save-network)
   - [Show Crop Image](#show-crop-image)
   - [Paint](#paint)
+  - [Notch](#notch)
   - [MemoryUsage](#memoryusage)
   - [Other APIs](#other-apis)
 
@@ -390,6 +391,7 @@ EditorConfig
 | animationDuration      | auto center animation duration                                     | Duration(milliseconds: 200)                                  |
 | tickerDuration         | duration to begin auto center animation after crop rect is changed | Duration(milliseconds: 400)                                  |
 | cropAspectRatio        | aspect ratio of crop rect                                          | null(custom)                                                 |
+| initialCropAspectRatio | initial aspect ratio of crop rect                                  | null(custom: initial crop rect will fill the entire image)   |
 | initCropRectType       | init crop rect base on initial image rect or image layout rect     | imageRect                                                    |
 | cornerPainter          | corner shape                                                       | ExtendedImageCropLayerPainterNinetyDegreesCorner()           |
 | hitTestBehavior        | How to behave during hit tests                                     | HitTestBehavior.deferToChild                                 |
@@ -927,6 +929,26 @@ ExtendedImage
 see [paint image demo](https://github.com/fluttercandies/extended_image/blob/master/example/lib/pages/simple/paint_image_demo.dart)
 and [push to refresh header which is used in crop image demo](https://github.com/fluttercandies/extended_image/blob/master/example/lib/common/widget/push_to_refresh_header.dart)
 
+## Notch
+
+By setting layoutInsets, you can ensure the image is positioned outside of obstructing elements such as
+the phone notch or home indicator if displayed in full screen. This will still allow the image margin to
+show underneath the notch if zoomed in. 
+
+ExtendedImage
+
+| parameter        | description                                       | default         |
+| ---------------- | ------------------------------------------------- | --------------- |
+| layoutInsets     | Amount to inset from the edge during image layout | EdgeInsets.zero |
+
+```dart
+  ExtendedImage.network(
+    url,
+    fit: BoxFit.contain,
+    layoutInsets: MediaQuery.of(context).padding
+  );
+```
+
 ## MemoryUsage
 
 You can reduce memory usage with following settings now.
@@ -936,7 +958,7 @@ You can reduce memory usage with following settings now.
 | parameter                                                | description                                                  | default   |
 | -------------------------------------------------------- | ------------------------------------------------------------ | --------- |
 | [ExtendedResizeImage.compressionRatio]                   | The image`s size will resize to original * [compressionRatio].It's ExtendedResizeImage`s first pick.The compressionRatio`s range is from 0.0 (exclusive), to 1.0 (exclusive). | null      |
-| [ExtendedResizeImage.maxBytes]                           | [ExtendedResizeImage] will compress the image to a size that is smaller than [maxBytes]. The default size is 500KB. | 500 << 10 |
+| [ExtendedResizeImage.maxBytes]                           | [ExtendedResizeImage] will compress the image to a size that is smaller than [maxBytes]. The default size is 50KB. It's actual bytes of Image, not decode bytes | 50 << 10 |
 | [ExtendedResizeImage.width]/[ExtendedResizeImage.height] | The width/height the image should decode to and cache. It's same as [ResizeImage], | null      |
 
 ```dart
