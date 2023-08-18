@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:extended_image/src/border_painter.dart';
 import 'package:extended_image/src/gesture/gesture.dart';
 import 'package:extended_image/src/image/raw_image.dart';
@@ -980,7 +982,7 @@ class _ExtendedImageState extends State<ExtendedImage>
           if (widget.borderRadius != null) {
             current = ClipRRect(
               child: current,
-              borderRadius: widget.borderRadius,
+              borderRadius: widget.borderRadius!,
               clipBehavior: widget.clipBehavior,
             );
           }
@@ -1243,7 +1245,10 @@ class _ExtendedImageState extends State<ExtendedImage>
     });
 
     if (widget.clearMemoryCacheIfFailed) {
-      widget.image.evict();
+      scheduleMicrotask(() {
+        widget.image.evict();
+        // PaintingBinding.instance.imageCache.evict(key);
+      });
     }
   }
 
