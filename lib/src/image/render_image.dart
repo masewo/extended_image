@@ -1,6 +1,6 @@
 import 'dart:ui' as ui show Image;
 
-import 'package:extended_image/src/editor/editor_utils.dart';
+import 'package:extended_image/src/editor/edit_action_details.dart';
 import 'package:extended_image/src/gesture/utils.dart';
 import 'package:extended_image/src/typedef.dart';
 import 'package:flutter/material.dart' hide Image;
@@ -38,7 +38,6 @@ class ExtendedRenderImage extends RenderBox {
     GestureDetails? gestureDetails,
     EditActionDetails? editActionDetails,
     EdgeInsets layoutInsets = EdgeInsets.zero,
-  
   })  : _image = image,
         _width = width,
         _height = height,
@@ -251,7 +250,8 @@ class ExtendedRenderImage extends RenderBox {
     }
   }
 
-  /// Used to set the filterQuality of the image
+  /// Used to set the filterQuality of the image.
+  ///
   /// Use the [FilterQuality.low] quality setting to scale the image, which corresponds to
   /// bilinear interpolation, rather than the default [FilterQuality.none] which corresponds
   /// to nearest-neighbor.
@@ -342,7 +342,7 @@ class ExtendedRenderImage extends RenderBox {
 
   /// Whether to invert the colors of the image.
   ///
-  /// inverting the colors of an image applies a new color filter to the paint.
+  /// Inverting the colors of an image applies a new color filter to the paint.
   /// If there is another specified color filter, the invert will be applied
   /// after it. This is primarily used for implementing smart invert on iOS.
   bool get invertColors => _invertColors;
@@ -427,7 +427,9 @@ class ExtendedRenderImage extends RenderBox {
     }
 
     return constraints.constrainSizeAndAttemptToPreserveAspectRatio(Size(
-        _image!.width.toDouble() / _scale, _image!.height.toDouble() / _scale));
+      _image!.width.toDouble() / _scale,
+      _image!.height.toDouble() / _scale,
+    ));
   }
 
   @override
@@ -540,8 +542,9 @@ class ExtendedRenderImage extends RenderBox {
     properties.add(DoubleProperty('width', width, defaultValue: null));
     properties.add(DoubleProperty('height', height, defaultValue: null));
     properties.add(DoubleProperty('scale', scale, defaultValue: 1.0));
-    properties
-        .add(DiagnosticsProperty<Color>('color', color, defaultValue: null));
+    properties.add(ColorProperty('color', color, defaultValue: null));
+    properties.add(DiagnosticsProperty<Animation<double>?>('opacity', opacity,
+        defaultValue: null));
     properties.add(EnumProperty<BlendMode>('colorBlendMode', colorBlendMode,
         defaultValue: null));
     properties.add(EnumProperty<BoxFit>('fit', fit, defaultValue: null));

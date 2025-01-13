@@ -1,20 +1,20 @@
 import 'dart:async';
 import 'dart:math';
 
-@FFArgumentImport()
+@FFAutoImport()
 import 'package:example/common/data/tu_chong_source.dart' hide asT;
-@FFArgumentImport()
+@FFAutoImport()
 import 'package:example/common/model/pic_swiper_item.dart';
-import 'package:example/common/text/my_extended_text_selection_controls.dart';
-import 'package:example/common/text/my_special_text_span_builder.dart';
+// import 'package:example/common/text/my_extended_text_selection_controls.dart';
+// import 'package:example/common/text/my_special_text_span_builder.dart';
 import 'package:example/common/utils/util.dart';
 import 'package:extended_image/extended_image.dart';
-import 'package:extended_text/extended_text.dart';
+//import 'package:extended_text/extended_text.dart';
 import 'package:ff_annotation_route_library/ff_annotation_route_library.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart' hide Image;
 import 'package:oktoast/oktoast.dart';
-import 'package:url_launcher/url_launcher.dart';
+// import 'package:url_launcher/url_launcher.dart';
 
 import 'hero.dart';
 import 'item_builder.dart';
@@ -83,43 +83,43 @@ class ImageDetail extends StatelessWidget {
               const SizedBox(
                 height: 15.0,
               ),
-              ExtendedText(
+              Text(
                 content,
-                onSpecialTextTap: (dynamic parameter) {
-                  if (parameter.toString().startsWith('\$')) {
-                    launchUrl(Uri.parse('https://github.com/fluttercandies'));
-                  } else if (parameter.toString().startsWith('@')) {
-                    launchUrl(Uri.parse('mailto:zmtzawqlp@live.com'));
-                  }
-                },
-                specialTextSpanBuilder: MySpecialTextSpanBuilder(),
+                // onSpecialTextTap: (dynamic parameter) {
+                //   if (parameter.toString().startsWith('\$')) {
+                //     launchUrl(Uri.parse('https://github.com/fluttercandies'));
+                //   } else if (parameter.toString().startsWith('@')) {
+                //     launchUrl(Uri.parse('mailto:zmtzawqlp@live.com'));
+                //   }
+                // },
+                // specialTextSpanBuilder: MySpecialTextSpanBuilder(),
                 //overflow: ExtendedTextOverflow.ellipsis,
                 style: const TextStyle(fontSize: 14, color: Colors.grey),
                 maxLines: 10,
-                overflowWidget: TextOverflowWidget(
-                  //maxHeight: double.infinity,
-                  //align: TextOverflowAlign.right,
-                  //fixedOffset: Offset.zero,
-                  //debugOverflowRectColor: Colors.red,
-                  child: DefaultTextStyle(
-                    style: const TextStyle(fontSize: 12, color: Colors.blue),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        const Text('\u2026 '),
-                        GestureDetector(
-                          child: const Text('more'),
-                          onTap: () {
-                            launchUrl(Uri.parse(
-                                'https://github.com/fluttercandies/extended_text'));
-                          },
-                        )
-                      ],
-                    ),
-                  ),
-                ),
-                selectionEnabled: true,
-                selectionControls: MyTextSelectionControls(),
+                // overflowWidget: TextOverflowWidget(
+                //   //maxHeight: double.infinity,
+                //   //align: TextOverflowAlign.right,
+                //   //fixedOffset: Offset.zero,
+                //   //debugOverflowRectColor: Colors.red,
+                //   child: DefaultTextStyle(
+                //     style: const TextStyle(fontSize: 12, color: Colors.blue),
+                //     child: Row(
+                //       mainAxisSize: MainAxisSize.min,
+                //       children: <Widget>[
+                //         const Text('\u2026 '),
+                //         GestureDetector(
+                //           child: const Text('more'),
+                //           onTap: () {
+                //             launchUrl(Uri.parse(
+                //                 'https://github.com/fluttercandies/extended_text'));
+                //           },
+                //         )
+                //       ],
+                //     ),
+                //   ),
+                // ),
+                // selectionEnabled: true,
+                // selectionControls: MyTextSelectionControls(),
               ),
               const SizedBox(
                 height: 20.0,
@@ -149,7 +149,7 @@ class ImageDetail extends StatelessWidget {
                 '${tuChongItem?.imageSize.width.toInt()} * ${tuChongItem?.imageSize.height.toInt()}',
               ),
             ),
-          Positioned(
+          const Positioned(
             top: -33.0,
             right: 0,
             left: 0,
@@ -157,7 +157,7 @@ class ImageDetail extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.center,
-                children: const <Widget>[
+                children: <Widget>[
                   Icon(
                     Icons.star,
                     color: Colors.yellow,
@@ -197,37 +197,37 @@ class ImageDetail extends StatelessWidget {
             BoxShadow(color: Colors.grey, blurRadius: 15.0, spreadRadius: 20.0),
           ]),
     );
-
-    return ExtendedTextSelectionPointerHandler(
-      //default behavior
-      // child: result,
-      //custom your behavior
-      builder: (List<ExtendedTextSelectionState> states) {
-        return GestureDetector(
-          onTap: () {
-            //do not pop page
-          },
-          child: Listener(
-            child: result,
-            behavior: HitTestBehavior.translucent,
-            onPointerDown: (PointerDownEvent value) {
-              for (final ExtendedTextSelectionState state in states) {
-                if (!state.containsPosition(value.position)) {
-                  //clear other selection
-                  state.clearSelection();
-                }
-              }
-            },
-            onPointerMove: (PointerMoveEvent value) {
-              //clear other selection
-              for (final ExtendedTextSelectionState state in states) {
-                state.clearSelection();
-              }
-            },
-          ),
-        );
-      },
-    );
+    return result;
+    // return ExtendedTextSelectionPointerHandler(
+    //   //default behavior
+    //   // child: result,
+    //   //custom your behavior
+    //   builder: (List<ExtendedTextSelectionState> states) {
+    //     return GestureDetector(
+    //       onTap: () {
+    //         //do not pop page
+    //       },
+    //       child: Listener(
+    //         child: result,
+    //         behavior: HitTestBehavior.translucent,
+    //         onPointerDown: (PointerDownEvent value) {
+    //           for (final ExtendedTextSelectionState state in states) {
+    //             if (!state.containsPosition(value.position)) {
+    //               //clear other selection
+    //               state.clearSelection();
+    //             }
+    //           }
+    //         },
+    //         onPointerMove: (PointerMoveEvent value) {
+    //           //clear other selection
+    //           for (final ExtendedTextSelectionState state in states) {
+    //             state.clearSelection();
+    //           }
+    //         },
+    //       ),
+    //     );
+    //   },
+    // );
   }
 }
 
@@ -366,6 +366,35 @@ class _PicSwiperState extends State<PicSwiper> with TickerProviderStateMixin {
   bool _showSwiper = true;
   double _imageDetailY = 0;
   Rect? imageDRect;
+
+  final List<int> _cachedIndexes = <int>[];
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _preloadImage(widget.index! - 1);
+    _preloadImage(widget.index! + 1);
+  }
+
+  void _preloadImage(int index) {
+    if (_cachedIndexes.contains(index)) {
+      return;
+    }
+    if (0 <= index && index < widget.pics!.length) {
+      final String url = widget.pics![index].picUrl;
+
+      precacheImage(
+        ExtendedNetworkImageProvider(
+          url,
+          cache: true,
+          imageCacheName: 'CropImage',
+        ),
+        context,
+      );
+
+      _cachedIndexes.add(index);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
@@ -486,7 +515,10 @@ class _PicSwiperState extends State<PicSwiper> with TickerProviderStateMixin {
                           return ExtendedImageGesture(
                             state,
                             canScaleImage: (_) => _imageDetailY == 0,
-                            imageBuilder: (Widget image) {
+                            imageBuilder: (
+                              Widget image, {
+                              ExtendedImageGestureState? imageGestureState,
+                            }) {
                               return Stack(
                                 children: <Widget>[
                                   Positioned.fill(
@@ -563,6 +595,8 @@ class _PicSwiperState extends State<PicSwiper> with TickerProviderStateMixin {
                 }
                 _showSwiper = true;
                 rebuildSwiper.add(_showSwiper);
+                _preloadImage(index - 1);
+                _preloadImage(index + 1);
               },
             ),
             StreamBuilder<bool>(
@@ -594,10 +628,11 @@ class _PicSwiperState extends State<PicSwiper> with TickerProviderStateMixin {
         Offset offset, {
         ExtendedImageSlidePageState? state,
       }) {
+        if (state == null) {
+          return null;
+        }
         //image is ready and it's not sliding.
-        if (state != null &&
-            detailKeys[_currentIndex!] != null &&
-            state.scale == 1.0) {
+        if (detailKeys[_currentIndex!] != null && state.scale == 1.0) {
           //don't slide page if scale of image is more than 1.0
           if (state.imageGestureState!.gestureDetails!.totalScale! > 1.0) {
             return 1.0;
@@ -614,10 +649,11 @@ class _PicSwiperState extends State<PicSwiper> with TickerProviderStateMixin {
         Offset offset, {
         ExtendedImageSlidePageState? state,
       }) {
+        if (state == null) {
+          return null;
+        }
         //image is ready and it's not sliding.
-        if (state != null &&
-            detailKeys[_currentIndex!] != null &&
-            state.scale == 1.0) {
+        if (detailKeys[_currentIndex!] != null && state.scale == 1.0) {
           //don't slide page if scale of image is more than 1.0
 
           if (state.imageGestureState!.gestureDetails!.totalScale! > 1.0) {
@@ -649,10 +685,13 @@ class _PicSwiperState extends State<PicSwiper> with TickerProviderStateMixin {
         ExtendedImageSlidePageState? state,
         ScaleEndDetails? details,
       }) {
-        if (_imageDetailY != 0 && state!.scale == 1) {
+        if (state == null || details == null) {
+          return null;
+        }
+        if (_imageDetailY != 0 && state.scale == 1) {
           if (!_slideEndAnimationController.isAnimating) {
 // get magnitude from gesture velocity
-            final double magnitude = details!.velocity.pixelsPerSecond.distance;
+            final double magnitude = details.velocity.pixelsPerSecond.distance;
 
             // do a significant magnitude
 

@@ -27,9 +27,10 @@ class ImageSaver {
   const ImageSaver._();
 
   static Future<String?> save(String name, Uint8List fileData) async {
-    final String title = '${DateTime.now().millisecondsSinceEpoch}.jpg';
+    final String title = '${DateTime.now().millisecondsSinceEpoch}_$name';
     final AssetEntity? imageEntity = await PhotoManager.editor.saveImage(
       fileData,
+      filename: name,
       title: title,
     );
     final File? file = await imageEntity?.file;

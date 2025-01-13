@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:extended_image/src/border_painter.dart';
 import 'package:extended_image/src/gesture/gesture.dart';
 import 'package:extended_image/src/image/raw_image.dart';
@@ -7,6 +9,7 @@ import 'package:extended_image_library/extended_image_library.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart' hide Image;
+import 'package:flutter/scheduler.dart';
 import 'package:flutter/semantics.dart';
 
 import 'editor/editor.dart';
@@ -14,6 +17,7 @@ import 'gesture/slide_page.dart';
 import 'gesture/slide_page_handler.dart';
 
 /// extended image base on official
+/// [Image]
 class ExtendedImage extends StatefulWidget {
   ExtendedImage({
     Key? key,
@@ -41,7 +45,6 @@ class ExtendedImage extends StatefulWidget {
     this.beforePaintImage,
     this.afterPaintImage,
     this.mode = ExtendedImageMode.none,
-    this.enableMemoryCache = true,
     this.clearMemoryCacheIfFailed = true,
     this.onDoubleTap,
     this.initGestureConfigHandler,
@@ -217,7 +220,6 @@ class ExtendedImage extends StatefulWidget {
     this.beforePaintImage,
     this.afterPaintImage,
     this.mode = ExtendedImageMode.none,
-    this.enableMemoryCache = true,
     this.clearMemoryCacheIfFailed = true,
     this.onDoubleTap,
     this.initGestureConfigHandler,
@@ -315,7 +317,6 @@ class ExtendedImage extends StatefulWidget {
     this.beforePaintImage,
     this.afterPaintImage,
     this.mode = ExtendedImageMode.none,
-    this.enableMemoryCache = true,
     this.clearMemoryCacheIfFailed = true,
     this.onDoubleTap,
     this.initGestureConfigHandler,
@@ -407,7 +408,6 @@ class ExtendedImage extends StatefulWidget {
     this.beforePaintImage,
     this.afterPaintImage,
     this.mode = ExtendedImageMode.none,
-    this.enableMemoryCache = true,
     this.clearMemoryCacheIfFailed = true,
     this.onDoubleTap,
     this.initGestureConfigHandler,
@@ -476,7 +476,6 @@ class ExtendedImage extends StatefulWidget {
     this.beforePaintImage,
     this.afterPaintImage,
     this.mode = ExtendedImageMode.none,
-    this.enableMemoryCache = true,
     this.clearMemoryCacheIfFailed = true,
     this.onDoubleTap,
     this.initGestureConfigHandler,
@@ -568,9 +567,6 @@ class ExtendedImage extends StatefulWidget {
 
   ///call back of double tap  under ExtendedImageMode.gesture
   final DoubleTap? onDoubleTap;
-
-  ///whether cache in PaintingBinding.instance.imageCache
-  final bool enableMemoryCache;
 
   ///when failed to load image, whether clear memory cache
   ///if true, image will reload in next time.
@@ -839,8 +835,48 @@ class ExtendedImage extends StatefulWidget {
     properties.add(DiagnosticsProperty<bool>(
         'this.excludeFromSemantics', excludeFromSemantics));
     properties.add(EnumProperty<FilterQuality>('filterQuality', filterQuality));
-    properties.add(DiagnosticsProperty<EdgeInsets>('layoutInsets', layoutInsets));
+    properties
+        .add(DiagnosticsProperty<EdgeInsets>('layoutInsets', layoutInsets));
   }
+
+  /// default state widget builder
+  static Widget Function(
+    BuildContext context,
+    ExtendedImageState state,
+  ) globalStateWidgetBuilder = (
+    BuildContext context,
+    ExtendedImageState state,
+  ) {
+    switch (state.extendedImageLoadState) {
+      case LoadState.loading:
+        return Container(
+          alignment: Alignment.center,
+          child: Theme.of(context).platform == TargetPlatform.iOS
+              ? const CupertinoActivityIndicator(
+                  animating: true,
+                  radius: 16.0,
+                )
+              : CircularProgressIndicator(
+                  strokeWidth: 2.0,
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                      Theme.of(context).primaryColor),
+                ),
+        );
+
+      case LoadState.completed:
+        return state.completedWidget;
+      case LoadState.failed:
+        return Container(
+          alignment: Alignment.center,
+          child: GestureDetector(
+            onTap: () {
+              state.reLoadImage();
+            },
+            child: const Text('Failed to load image'),
+          ),
+        );
+    }
+  };
 }
 
 class _ExtendedImageState extends State<ExtendedImage>
@@ -917,28 +953,7 @@ class _ExtendedImageState extends State<ExtendedImage>
 
     if (current == null) {
       if (widget.enableLoadState) {
-        switch (_loadState) {
-          case LoadState.loading:
-            current = Container(
-              alignment: Alignment.center,
-              child: _getIndicator(context),
-            );
-            break;
-          case LoadState.completed:
-            current = _getCompletedWidget();
-            break;
-          case LoadState.failed:
-            current = Container(
-              alignment: Alignment.center,
-              child: GestureDetector(
-                onTap: () {
-                  reLoadImage();
-                },
-                child: const Text('Failed to load image'),
-              ),
-            );
-            break;
-        }
+        current = ExtendedImage.globalStateWidgetBuilder(context, this);
       } else {
         if (_loadState == LoadState.completed) {
           current = _getCompletedWidget();
@@ -960,7 +975,7 @@ class _ExtendedImageState extends State<ExtendedImage>
           if (widget.borderRadius != null) {
             current = ClipRRect(
               child: current,
-              borderRadius: widget.borderRadius,
+              borderRadius: widget.borderRadius!,
               clipBehavior: widget.clipBehavior,
             );
           }
@@ -1166,19 +1181,6 @@ class _ExtendedImageState extends State<ExtendedImage>
     return current;
   }
 
-  Widget _getIndicator(BuildContext context) {
-    return Theme.of(context).platform == TargetPlatform.iOS
-        ? const CupertinoActivityIndicator(
-            animating: true,
-            radius: 16.0,
-          )
-        : CircularProgressIndicator(
-            strokeWidth: 2.0,
-            valueColor:
-                AlwaysStoppedAnimation<Color>(Theme.of(context).primaryColor),
-          );
-  }
-
   ImageStreamListener _getListener({bool recreateListener = false}) {
     if (_imageStreamListener == null || recreateListener) {
       _lastException = null;
@@ -1211,11 +1213,6 @@ class _ExtendedImageState extends State<ExtendedImage>
       _frameNumber = _frameNumber == null ? 0 : _frameNumber! + 1;
       _wasSynchronouslyLoaded = _wasSynchronouslyLoaded | synchronousCall;
     });
-
-    // clearMemoryCacheWhenDispose is better
-    // if (!widget.enableMemoryCache) {
-    //   widget.image.evict();
-    // }
   }
 
   void _listenToStream() {
@@ -1236,12 +1233,17 @@ class _ExtendedImageState extends State<ExtendedImage>
     });
 
     if (widget.clearMemoryCacheIfFailed) {
-      widget.image.evict();
+      scheduleMicrotask(() {
+        widget.image.evict();
+        // PaintingBinding.instance.imageCache.evict(key);
+      });
     }
   }
 
   void _replaceImage({required ImageInfo? info}) {
-    _imageInfo?.dispose();
+    final ImageInfo? oldImageInfo = _imageInfo;
+    SchedulerBinding.instance
+        .addPostFrameCallback((_) => oldImageInfo?.dispose());
     _imageInfo = info;
   }
 

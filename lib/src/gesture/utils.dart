@@ -33,7 +33,7 @@ class Boundary {
   int get hashCode => Object.hash(left, right, top, bottom);
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     if (other.runtimeType != runtimeType) {
       return false;
     }
@@ -57,12 +57,16 @@ class Boundary {
 //}
 
 class GestureDetails {
-  GestureDetails(
-      {this.offset,
-      this.totalScale,
-      GestureDetails? gestureDetails,
-      this.actionType = ActionType.pan,
-      this.userOffset = true}) {
+  GestureDetails({
+    this.offset,
+    this.totalScale,
+    GestureDetails? gestureDetails,
+    this.actionType = ActionType.pan,
+    this.userOffset = true,
+    this.initialAlignment,
+    this.slidePageOffset,
+    this.rawDestinationRect,
+  }) {
     if (gestureDetails != null) {
       _computeVerticalBoundary = gestureDetails._computeVerticalBoundary;
       _computeHorizontalBoundary = gestureDetails._computeHorizontalBoundary;
@@ -108,7 +112,7 @@ class GestureDetails {
   ///from
   Rect? rawDestinationRect;
 
-  InitialAlignment? initialAlignment;
+  final InitialAlignment? initialAlignment;
 
   ///slide page offset
   Offset? slidePageOffset;
@@ -128,7 +132,7 @@ class GestureDetails {
       slidePageOffset);
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     if (other.runtimeType != runtimeType) {
       return false;
     }
@@ -326,6 +330,19 @@ class GestureDetails {
                 (delta.dy > 0 && boundary.top) ||
                 !_computeVerticalBoundary);
     }
+  }
+
+  GestureDetails copy() {
+    return GestureDetails(
+      offset: offset,
+      totalScale: totalScale,
+      gestureDetails: this,
+      actionType: actionType,
+      userOffset: userOffset,
+      initialAlignment: initialAlignment,
+      slidePageOffset: slidePageOffset,
+      rawDestinationRect: rawDestinationRect,
+    ).._boundary = _boundary;
   }
 }
 
