@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 @FFRoute(
   name: 'fluttercandies://slidepage',
   routeName: 'SlidePage',
-  description: 'Simple demo for.',
+  description: 'Simple demo for slide page.',
   exts: <String, dynamic>{
     'group': 'Simple',
     'order': 5,
@@ -62,10 +62,8 @@ class _SlidePageDemoState extends State<SlidePageDemo> {
               ),
               onTap: () {
                 Navigator.of(context).pushNamed(
-                    Routes.fluttercandiesSlidepageitem,
-                    arguments: <String, dynamic>{
-                      'url': url,
-                    });
+                    Routes.fluttercandiesSlidepageitem.name,
+                    arguments: Routes.fluttercandiesSlidepageitem.d(url: url));
               },
             );
           },

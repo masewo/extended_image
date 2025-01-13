@@ -2,6 +2,7 @@ import 'package:extended_image/extended_image.dart';
 import 'package:extended_image_library/extended_image_library.dart';
 import 'package:ff_annotation_route_library/ff_annotation_route_library.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:oktoast/oktoast.dart';
 import 'common/widget/memory_usage_view.dart';
@@ -27,6 +28,16 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
+      scrollBehavior: kIsWeb
+          ? const ScrollBehavior().copyWith(
+              dragDevices: <PointerDeviceKind>{
+                PointerDeviceKind.mouse,
+                PointerDeviceKind.touch,
+                PointerDeviceKind.stylus,
+                PointerDeviceKind.unknown
+              },
+            )
+          : null,
       builder: (BuildContext c, Widget? w) {
         w = Stack(
           children: <Widget>[
@@ -37,7 +48,9 @@ class MyApp extends StatelessWidget {
         if (!kIsWeb) {
           final MediaQueryData data = MediaQuery.of(c);
           w = MediaQuery(
-            data: data.copyWith(textScaleFactor: 1.0),
+            data: data.copyWith(
+              textScaler: TextScaler.noScaling,
+            ),
             child: w,
           );
         }
@@ -49,17 +62,6 @@ class MyApp extends StatelessWidget {
         return onGenerateRoute(
           settings: settings,
           getRouteSettings: getRouteSettings,
-          // routeSettingsWrapper: (FFRouteSettings ffRouteSettings) {
-          //   if (ffRouteSettings.name == Routes.fluttercandiesMainpage ||
-          //       ffRouteSettings.name == Routes.fluttercandiesDemogrouppage) {
-          //     return ffRouteSettings;
-          //   }
-          //   return ffRouteSettings.copyWith(
-          //       widget: CommonWidget(
-          //     child: ffRouteSettings.widget,
-          //     title: ffRouteSettings.routeName,
-          //   ));
-          // },
         );
       },
     ));

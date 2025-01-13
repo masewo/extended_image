@@ -21,8 +21,7 @@ class SimpleImageEditor extends StatefulWidget {
 }
 
 class _SimpleImageEditorState extends State<SimpleImageEditor> {
-  final GlobalKey<ExtendedImageEditorState> editorKey =
-      GlobalKey<ExtendedImageEditorState>();
+  final ImageEditorController _editorController = ImageEditorController();
   bool _cropping = false;
 
   @override
@@ -36,19 +35,21 @@ class _SimpleImageEditorState extends State<SimpleImageEditor> {
         fit: BoxFit.contain,
         mode: ExtendedImageMode.editor,
         enableLoadState: true,
-        extendedImageEditorKey: editorKey,
+
         cacheRawData: true,
         //maxBytes: 1024 * 50,
         initEditorConfigHandler: (ExtendedImageState? state) {
           return EditorConfig(
-              maxScale: 4.0,
-              cropRectPadding: const EdgeInsets.all(20.0),
-              hitTestSize: 20.0,
-              initCropRectType: InitCropRectType.imageRect,
-              cropAspectRatio: CropAspectRatios.ratio4_3,
-              editActionDetailsIsChanged: (EditActionDetails? details) {
-                //print(details?.totalScale);
-              });
+            maxScale: 4.0,
+            cropRectPadding: const EdgeInsets.all(20.0),
+            hitTestSize: 20.0,
+            initCropRectType: InitCropRectType.imageRect,
+            cropAspectRatio: CropAspectRatios.ratio4_3,
+            editActionDetailsIsChanged: (EditActionDetails? details) {
+              //print(details?.totalScale);
+            },
+            controller: _editorController,
+          );
         },
       ),
       floatingActionButton: FloatingActionButton(
@@ -65,13 +66,11 @@ class _SimpleImageEditorState extends State<SimpleImageEditor> {
     }
     _cropping = true;
     try {
-      final Uint8List fileData = Uint8List.fromList(kIsWeb
-          ? (await cropImageDataWithDartLibrary(
-              state: editorKey.currentState!))!
-          : (await cropImageDataWithNativeLibrary(
-              state: editorKey.currentState!))!);
-      final String? fileFath =
-          await ImageSaver.save('extended_image_cropped_image.jpg', fileData);
+      final EditImageInfo fileData = kIsWeb
+          ? (await cropImageDataWithDartLibrary(_editorController))
+          : (await cropImageDataWithNativeLibrary(_editorController));
+      final String? fileFath = await ImageSaver.save(
+          'extended_image_cropped_image.jpg', fileData.data!);
       showToast('save image : $fileFath');
     } finally {
       _cropping = false;
