@@ -199,6 +199,7 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor>
       alignment: extendedImage.alignment,
       repeat: extendedImage.repeat,
       centerSlice: extendedImage.centerSlice,
+      beforePaintImage: extendedImage.beforePaintImage,
       //matchTextDirection: extendedImage.matchTextDirection,
       //don't support TextDirection for editor
       matchTextDirection: false,
@@ -206,6 +207,7 @@ class ExtendedImageEditorState extends State<ExtendedImageEditor>
       filterQuality: extendedImage.filterQuality,
       editActionDetails: _editActionDetails,
       afterPaintImage: (Canvas canvas, Rect rect, ui.Image image, Paint paint) {
+        extendedImage.afterPaintImage?.call(canvas, rect, image, paint);
         if (_history.isEmpty) {
           _currentIndex = -1;
           _saveCurrentState();
